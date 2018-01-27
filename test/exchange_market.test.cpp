@@ -92,10 +92,10 @@ public:
 go_bandit([]{
 describe("Market", []{
     Market::TradedPairs traded_pairs{
-        Market::CP{new Currency{"USD", "GBP", false, 2ll, 5000, 60'000'000'000}},
-        Market::CP{new Currency{"USD", "EUR", false, 2ll, 6000, 250'000'000'000}},
-        Market::CP{new Currency{"GBP", "EUR", false, 2ll, 11000, 20'000'000'000}},
-        Market::CP{new Currency{"USD", "BTC", false, 2ll, 5000, 1'000'000'000}},
+        Market::CP{new Currency{"GBP", "USD", 2ll, 5000, 60'000'000'000}},
+        Market::CP{new Currency{"EUR", "USD", 2ll, 6000, 250'000'000'000}},
+        Market::CP{new Currency{"GBP", "EUR", 2ll, 11000, 20'000'000'000}},
+        Market::CP{new Currency{"USD", "BTC", 2ll, 5000, 1'000'000'000}},
     };
     Market market {traded_pairs, "USD"};
 
@@ -125,8 +125,8 @@ describe("Market", []{
             auto quotes = market.get_a_random_triangle();
             AssertThat(quotes.size(), Equals(3));
             AssertThat(quotes[0].ccyPair, Equals("GBPEUR"));
-            AssertThat(quotes[1].ccyPair, Equals("USDGBP"));
-            AssertThat(quotes[2].ccyPair, Equals("USDEUR"));
+            AssertThat(quotes[1].ccyPair, Equals("GBPUSD"));
+            AssertThat(quotes[2].ccyPair, Equals("EURUSD"));
         });
     });
 

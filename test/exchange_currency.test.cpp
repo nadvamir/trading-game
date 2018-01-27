@@ -11,35 +11,30 @@ const double EPS = 0.00001;
 go_bandit([]{
 describe("Currency", []{
     describe("Quote", []{
-        Currency USDGBP {"USD", "GBP", true, 4ll, 6944};
-        Currency EURGBP {"EUR", "GBP", false, 2ll, 8300};
+        Currency GBPUSD {"GBP", "USD", 4ll, 14401};
+        Currency EURGBP {"EUR", "GBP", 2ll, 8300};
 
-        it("follows market convention for naming quotes", [&]{
-            AssertThat(USDGBP.quote().ccyPair, Equals("GBPUSD"));
+        it("combines currencies to form one ccy pair description", [&]{
+            AssertThat(GBPUSD.quote().ccyPair, Equals("GBPUSD"));
             AssertThat(EURGBP.quote().ccyPair, Equals("EURGBP"));
         });
 
-        it("follows market convention for quoting rate", [&]{
-            AssertThat(USDGBP.quote().bid, IsGreaterThan(1));
-            AssertThat(EURGBP.quote().bid, IsLessThan(1));
-        });
-
         it("applies the spread to the quote", [&]{
-            Quote qUSDGBP = USDGBP.quote();
+            Quote qUSDGBP = GBPUSD.quote();
             Quote qEURGBP = EURGBP.quote();
             AssertThat(qUSDGBP.ask - qUSDGBP.bid, EqualsWithDelta(0.0004, EPS));
             AssertThat(qEURGBP.ask - qEURGBP.bid, EqualsWithDelta(0.0002, EPS));
         });
 
         it("provides mid for convenience", [&]{
-            Quote qUSDGBP = USDGBP.quote();
+            Quote qUSDGBP = GBPUSD.quote();
             AssertThat(qUSDGBP.mid, IsGreaterThan(qUSDGBP.bid));
             AssertThat(qUSDGBP.mid, IsLessThan(qUSDGBP.ask));
         });
 
         it("serialises with the correct precision", [&]{
             std::stringstream ss;
-            ss << USDGBP.quote();
+            ss << GBPUSD.quote();
             AssertThat(ss.str(), Equals("GBPUSD 1.4399 1.4403"));
         });
     });
@@ -47,7 +42,7 @@ describe("Currency", []{
     describe("Trading", []{
         it("increases the rate when you buy", []{
             // GIVEN:
-            Currency EURGBP {"EUR", "GBP", false, 2ll, 5000ll};
+            Currency EURGBP {"EUR", "GBP", 2ll, 5000ll};
             // WHEN:
             EURGBP.buy(1'000'000'0000);
             // THEN:
@@ -56,7 +51,7 @@ describe("Currency", []{
 
         it("decreases the rate when you sell", []{
             // GIVEN:
-            Currency EURGBP {"EUR", "GBP", false, 2ll, 5000ll};
+            Currency EURGBP {"EUR", "GBP", 2ll, 5000ll};
             // WHEN:
             EURGBP.sell(1'000'000'0000);
             // THEN:
@@ -68,13 +63,13 @@ describe("Currency", []{
             const long long eurVolume = 10'000'000'000;
             const long long usdVolume = 3'000'000'000;
             const long long initRate = 5000;
-            Currency EURGBP {"EUR", "GBP", false, 2ll, initRate, eurVolume};
-            Currency USDGBP {"USD", "GBP", false, 2ll, initRate, usdVolume};
+            Currency EURGBP {"EUR", "GBP", 2ll, initRate, eurVolume};
+            Currency GBPUSD {"GBP", "USD", 2ll, initRate, usdVolume};
             // WHEN:
             EURGBP.sell(1'000'000);
-            USDGBP.sell(1'000'000);
+            GBPUSD.sell(1'000'000);
             // THEN:
-            const double largerMove = 0.5 - USDGBP.quote().mid;
+            const double largerMove = 0.5 - GBPUSD.quote().mid;
             const double smallerMove = 0.5 - EURGBP.quote().mid;
             AssertThat(smallerMove, IsLessThan(largerMove));
         });
@@ -83,7 +78,7 @@ describe("Currency", []{
     describe("Rebalancing", []{
         it("overwrites the current rate", []{
             // GIVEN:
-            Currency EURGBP {"EUR", "GBP", false, 2ll, 5000ll};
+            Currency EURGBP {"EUR", "GBP", 2ll, 5000ll};
             // WHEN:
             EURGBP.set_rate(0.7);
             // THEN:
@@ -92,7 +87,7 @@ describe("Currency", []{
     });
 
     describe("Matching", []{
-        Currency EURGBP {"EUR", "GBP", false, 2ll, 5000ll};
+        Currency EURGBP {"EUR", "GBP", 2ll, 5000ll};
         it("can tell whether the currency pair has requested currency", [&]{
             AssertThat(EURGBP.is("EUR"), Equals(true));
             AssertThat(EURGBP.is("GBP"), Equals(true));

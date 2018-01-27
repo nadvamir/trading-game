@@ -26,7 +26,6 @@ struct Quote {
 class Currency {
     std::string domestic;
     std::string foreign;
-    bool inverted;
     long long spread;
     mutable std::atomic_llong rate_bp;
     long long volume;
@@ -35,13 +34,11 @@ public:
     Currency(
             const std::string& domestic,
             const std::string& foreign,
-            bool inverted,
             long long spread,
             long long rate,
             long long volume = 10'000'000'000)
         : domestic(domestic)
         , foreign(foreign)
-        , inverted(inverted)
         , spread(spread)
         , rate_bp(rate)
         , volume(volume)
@@ -51,14 +48,8 @@ public:
     Quote quote() const
     {
         const double half_spread = double(spread) / 10000.0 / 2.0;
-        if (inverted) {
-            const double mid = 1.0 / (double(rate_bp.load()) / 10000.0);
-            return Quote{foreign + domestic, mid - half_spread, mid, mid + half_spread};
-        }
-        else {
-            const double mid = double(rate_bp.load()) / 10000.0;
-            return Quote{domestic + foreign, mid - half_spread, mid, mid + half_spread};
-        }
+        const double mid = double(rate_bp.load()) / 10000.0;
+        return Quote{domestic + foreign, mid - half_spread, mid, mid + half_spread};
     }
 
     void buy(long long amount) const
