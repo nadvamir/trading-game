@@ -27,7 +27,7 @@ describe("Market", []{
     describe("querying", [&]{
         it("returns a quote for the given ccy pair", [&]{
             auto quote = market.get_quote("GBP", "EUR");
-            AssertThat(quote.ccyPair, Equals("EURGBP"));
+            AssertThat(quote.ccy_pair, Equals("EURGBP"));
         });
 
         it("throws when a quote for the given ccy pair is not found", [&]{
@@ -37,15 +37,15 @@ describe("Market", []{
         it("returns all quotes", [&]{
             auto quotes = market.get_all_quotes();
             AssertThat(quotes.size(), Equals(4));
-            AssertThat(quotes[3].ccyPair, Equals("EURGBP"));
+            AssertThat(quotes[3].ccy_pair, Equals("EURGBP"));
         });
 
-        it("returns a triangular vector of quotes from a ccy pair to the real ccy", [&]{
+        it("returns a triangle of quotes from a ccy pair to the real ccy", [&]{
             auto quotes = market.get_a_random_triangle();
             AssertThat(quotes.size(), Equals(3));
-            AssertThat(quotes[0].ccyPair, Equals("EURGBP"));
-            AssertThat(quotes[1].ccyPair, Equals("EURUSD"));
-            AssertThat(quotes[2].ccyPair, Equals("GBPUSD"));
+            AssertThat(quotes[0].ccy_pair, Equals("EURGBP"));
+            AssertThat(quotes[1].ccy_pair, Equals("EURUSD"));
+            AssertThat(quotes[2].ccy_pair, Equals("GBPUSD"));
         });
     });
 
@@ -55,7 +55,7 @@ describe("Market", []{
             market.set_rate("EUR", "GBP", 42.0);
             auto quote = market.get_quote("EUR", "GBP");
             // THEN:
-            AssertThat(quote.mid, EqualsWithDelta(42.0, 0.0001));
+            AssertThat(quote.mid, EqualsWithDelta(42.0, EPS));
         });
     });
 });

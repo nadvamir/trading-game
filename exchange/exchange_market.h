@@ -3,6 +3,7 @@
 #include <exchange_currency.h>
 
 #include <vector>
+#include <array>
 #include <memory>
 #include <algorithm>
 #include <stdexcept>
@@ -53,16 +54,16 @@ public:
         return quotes;
     };
 
-    std::vector<Quote> get_a_random_triangle()
+    std::array<Quote, 3> get_a_random_triangle()
     {
         const size_t N = traded_pairs.size() - num_real;
         const size_t ccy_index = rand() % N + num_real;
         const auto q0 = traded_pairs[ccy_index]->quote();
 
-        std::vector<Quote> quotes;
-        quotes.push_back(q0);
-        quotes.push_back(get_quote(real_ccy, q0.domestic));
-        quotes.push_back(get_quote(real_ccy, q0.foreign));
+        std::array<Quote, 3> quotes;
+        quotes[0] = q0;
+        quotes[1] = get_quote(real_ccy, q0.domestic);
+        quotes[2] = get_quote(real_ccy, q0.foreign);
 
         return quotes;
     };

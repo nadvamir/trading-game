@@ -9,7 +9,7 @@
 namespace exchange {
 
 struct Quote {
-    std::string ccyPair;
+    std::string ccy_pair;
     std::string domestic;
     std::string foreign;
     double bid;
@@ -19,7 +19,7 @@ struct Quote {
     friend std::ostream& operator<<(std::ostream& os, const Quote& q)
     {
         return os
-            << q.ccyPair << " "
+            << q.ccy_pair << " "
             << std::fixed << std::setprecision(4)
             << q.bid << " " << q.ask;
     }

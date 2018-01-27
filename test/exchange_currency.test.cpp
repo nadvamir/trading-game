@@ -15,8 +15,8 @@ describe("Currency", []{
         Currency EURGBP {"EUR", "GBP", 2ll, 8300};
 
         it("combines currencies to form one ccy pair description", [&]{
-            AssertThat(GBPUSD.quote().ccyPair, Equals("GBPUSD"));
-            AssertThat(EURGBP.quote().ccyPair, Equals("EURGBP"));
+            AssertThat(GBPUSD.quote().ccy_pair, Equals("GBPUSD"));
+            AssertThat(EURGBP.quote().ccy_pair, Equals("EURGBP"));
         });
 
         it("applies the spread to the quote", [&]{
