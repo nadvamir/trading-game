@@ -10,6 +10,8 @@ namespace exchange {
 
 struct Quote {
     std::string ccyPair;
+    std::string domestic;
+    std::string foreign;
     double bid;
     double mid;
     double ask;
@@ -49,7 +51,10 @@ public:
     {
         const double half_spread = double(spread) / 10000.0 / 2.0;
         const double mid = double(rate_bp.load()) / 10000.0;
-        return Quote{domestic + foreign, mid - half_spread, mid, mid + half_spread};
+        return Quote {
+            domestic + foreign, domestic, foreign,
+            mid - half_spread, mid, mid + half_spread
+        };
     }
 
     void buy(long long amount) const
