@@ -1,10 +1,11 @@
 #pragma once
 
+#include <exchange_fxconversions.h>
+
 #include <atomic>
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <cmath>
 
 namespace exchange {
 
@@ -49,8 +50,8 @@ public:
 
     Quote quote() const
     {
-        const double half_spread = double(spread) / 10000.0 / 2.0;
-        const double mid = double(rate_bp.load()) / 10000.0;
+        const double half_spread = bp_to_double(spread) / 2.0;
+        const double mid = bp_to_double(rate_bp.load());
         return Quote {
             domestic + foreign, domestic, foreign,
             mid - half_spread, mid, mid + half_spread
@@ -69,7 +70,7 @@ public:
 
     void set_rate(double rate) const
     {
-        rate_bp.store(round(rate * 10000));
+        rate_bp.store(double_to_bp(rate));
     }
 
     bool is(const std::string& currency) const
