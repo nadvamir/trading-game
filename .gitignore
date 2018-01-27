@@ -28,5 +28,9 @@
 
 # Executables
 *.exe
+*.tsk
 *.out
 *.app
+
+# build dir
+build
