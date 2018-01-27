@@ -1,4 +1,8 @@
 CC=g++
+INCLUDES=-I. -Iexchange
+
+TEST_SOURCES  = test/exchange_currency.test.cpp
+TEST_SOURCES += test/exchange_main.test.cpp
 
 all: test
 
@@ -7,7 +11,7 @@ all: test
 exchange: test
 
 test: build
-	$(CC) -I. -Iexchange test/exchange_currency.test.cpp -o build/exchange.test.exe
+	$(CC) $(INCLUDES) $(TEST_SOURCES) -o build/exchange.test.exe
 	build/exchange.test.exe
 
 build:
