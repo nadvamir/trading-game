@@ -11,8 +11,8 @@ const double EPS = 0.00001;
 go_bandit([]{
 describe("Currency", []{
     describe("Quote", []{
-        Currency USDGBP {"USD", "GBP", true, 4ll, 6944ll};
-        Currency EURGBP {"EUR", "GBP", false, 2ll, 8300ll};
+        Currency USDGBP {"USD", "GBP", true, 4ll, 6944};
+        Currency EURGBP {"EUR", "GBP", false, 2ll, 8300};
 
         it("follows market convention for naming quotes", [&]{
             AssertThat(USDGBP.quote().ccyPair, Equals("GBPUSD"));
@@ -88,6 +88,21 @@ describe("Currency", []{
             EURGBP.set_rate(0.7);
             // THEN:
             AssertThat(EURGBP.quote().mid, EqualsWithDelta(0.7, EPS));
+        });
+    });
+
+    describe("Matching", []{
+        Currency EURGBP {"EUR", "GBP", false, 2ll, 5000ll};
+        it("can tell whether the currency pair has requested currency", [&]{
+            AssertThat(EURGBP.is("EUR"), Equals(true));
+            AssertThat(EURGBP.is("GBP"), Equals(true));
+            AssertThat(EURGBP.is("USD"), Equals(false));
+        });
+
+        it("can tell what currency pair it is regardless of quoting conventions", [&]{
+            AssertThat(EURGBP.is("EUR", "GBP"), Equals(true));
+            AssertThat(EURGBP.is("GBP", "EUR"), Equals(true));
+            AssertThat(EURGBP.is("USD", "GBP"), Equals(false));
         });
     });
 });

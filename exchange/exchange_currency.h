@@ -76,11 +76,22 @@ public:
         rate_bp.store(round(rate * 10000));
     }
 
+    bool is(const std::string& currency) const
+    {
+        return foreign == currency || domestic == currency;
+    }
+
+    bool is(const std::string& ccy1, const std::string& ccy2) const
+    {
+        return foreign == ccy1 && domestic == ccy2
+            || foreign == ccy2 && domestic == ccy1;
+    }
+
 private:
     long long calculate_move(long long amount) const
     {
         const double increase = 1.0 + 10 * double(amount) / double(volume);
-        return spread / 2 + 10000 * increase * increase; 
+        return 10000 * increase * increase; 
     }
 };
 
