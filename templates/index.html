@@ -70,9 +70,9 @@ canvas {
 
     <section class="players">
         players go here<br/>
-        <button id="addData">Add Data</button>
     </section>
 </div>
+<script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script>
 window.chartColors = {
     grey: 'rgb(70, 72, 90)',
@@ -82,10 +82,10 @@ window.chartColors = {
 
 function createAllCharts(currencies) {
     var charts = {};
-    currencies.forEach(function(ccyPair) {
+    for (let ccyPair in currencies) {
         createArticle(ccyPair);
         charts[ccyPair] = createChart(ccyPair);
-    });
+    }
     return charts;
 }
 
@@ -195,7 +195,7 @@ function createChart(ccyPair) {
             config.data.labels.push(++xAxisVal);
 
             config.data.datasets.forEach(function(dataset) {
-                dataset.data.push(1.11 + Math.random() / 100);
+                dataset.data.push(rate);
             });
 
             rateChart.update();
@@ -207,11 +207,25 @@ function createChart(ccyPair) {
     };
 }
 
-var charts = createAllCharts(["GBPUSD", "EURUSD", "EURGBP", "USDCAD"]);
-
-document.getElementById('addData').addEventListener('click', function() {
-    charts.GBPUSD.add(1.11 + Math.random() / 100);
+var charts;
+$.get('market', [], function(data) {
+    charts = createAllCharts(data);
 });
+
+function updateCharts(data) {
+    for (let ccyPair in data) {
+        let quote = data[ccyPair];
+        $('#quote-'+ccyPair).text(quote);
+
+        quote = quote.split(' ');
+        let rate = (parseFloat(quote[1]) + parseFloat(quote[2])) / 2;
+        charts[ccyPair].add(rate);
+    }
+}
+
+setInterval(function() {
+    $.get('market', [], updateCharts);
+}, 2000);
 
 </script>
 </body>

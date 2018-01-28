@@ -26,6 +26,13 @@ struct Quote {
         };
     }
 
+    std::string to_string() const
+    {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Quote& q)
     {
         return os

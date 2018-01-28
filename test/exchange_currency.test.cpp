@@ -36,6 +36,7 @@ describe("Currency", []{
             std::stringstream ss;
             ss << GBPUSD.quote();
             AssertThat(ss.str(), Equals("GBPUSD 1.4399 1.4403"));
+            AssertThat(ss.str(), Equals(GBPUSD.quote().to_string()));
         });
 
         it("returns an inverted quote if need be", [&]{
