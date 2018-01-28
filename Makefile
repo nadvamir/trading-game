@@ -15,11 +15,12 @@ all: test
 exchange: test
 
 test: build
-	$(CC) $(INCLUDES) $(TEST_SOURCES) -o build/exchange.test.exe
-	build/exchange.test.exe --reporter=spec
+	cd build && make
+	./build/Test.exe --reporter=spec
 
 build:
 	mkdir build
+	cd build && cmake ..
 
 clean:
 	rm -rf build
