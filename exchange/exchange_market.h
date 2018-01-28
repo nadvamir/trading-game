@@ -7,6 +7,7 @@
 #include <memory>
 #include <algorithm>
 #include <stdexcept>
+#include <cmath>
 
 namespace exchange {
 
@@ -24,8 +25,8 @@ public:
     Market(TradedPairs ccys, const std::string& real)
         : traded_pairs(ccys), real_ccy(real)
     {
-        auto it = partition(begin(traded_pairs), end(traded_pairs), [&](const auto& ccyPair) {
-            return ccyPair->is(real);
+        auto it = partition(begin(traded_pairs), end(traded_pairs), [&](const auto& ccy_pair) {
+            return ccy_pair->is(real);
         });
         num_real = it - begin(traded_pairs);
     }
@@ -41,13 +42,18 @@ public:
         if (quote.domestic != ccy1) return quote.invert();
         return quote;
     }
+    
+    Quote get_a_random_quote() const
+    {
+        return traded_pairs[rand() % traded_pairs.size()]->quote();
+    }
 
     std::vector<Quote> get_all_quotes() const
     {
         std::vector<Quote> quotes;
         quotes.reserve(traded_pairs.size());
-        for (const auto& ccyPair: traded_pairs) {
-            quotes.push_back(ccyPair->quote());
+        for (const auto& ccy_pair: traded_pairs) {
+            quotes.push_back(ccy_pair->quote());
         }
         return quotes;
     };
@@ -106,8 +112,8 @@ public:
 private:
     const Currency& find_currency(const std::string& ccy1, const std::string& ccy2) const
     {
-        auto it = find_if(begin(traded_pairs), end(traded_pairs), [&](const auto& ccyPair) {
-            return ccyPair->is(ccy1, ccy2);
+        auto it = find_if(begin(traded_pairs), end(traded_pairs), [&](const auto& ccy_pair) {
+            return ccy_pair->is(ccy1, ccy2);
         });
         if (it == end(traded_pairs)) throw std::runtime_error("Ccy pair not found!");
         return **it; // hurray for two-star developers...

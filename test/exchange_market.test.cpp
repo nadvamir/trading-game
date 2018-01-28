@@ -1,6 +1,7 @@
 #include <bandit/bandit.h>
 
 #include <exchange_market.h>
+#include <set>
 
 using namespace snowhouse;
 using namespace bandit;
@@ -46,6 +47,17 @@ describe("Market", []{
             AssertThat(quotes[0].ccy_pair, Equals("EURGBP"));
             AssertThat(quotes[1].ccy_pair, Equals("EURUSD"));
             AssertThat(quotes[2].ccy_pair, Equals("GBPUSD"));
+        });
+        
+        it("can randomly return a quote for every traded pair", [&]{
+            // GIVEN:
+            std::set<std::string> quotes;
+            // WHEN:
+            for (size_t i = 0; i < 100; ++i) {
+                quotes.insert(market.get_a_random_quote().ccy_pair);
+            }
+            // THEN:
+            AssertThat(quotes.size(), Equals(4));
         });
     });
 
