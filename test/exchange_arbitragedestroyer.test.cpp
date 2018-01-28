@@ -10,7 +10,7 @@ using namespace snowhouse;
 using namespace bandit;
 using namespace exchange;
 
-const double EPS = 0.0001;
+const double EPS = 1e-4;
 
 go_bandit([]{
 describe("ArbitrageDestroyer", []{

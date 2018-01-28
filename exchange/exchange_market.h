@@ -30,12 +30,12 @@ public:
         num_real = it - begin(traded_pairs);
     }
 
-    size_t num_real_currencies()
+    size_t num_real_currencies() const
     {
         return num_real;
     }
 
-    Quote get_quote(const std::string& ccy1, const std::string& ccy2)
+    Quote get_quote(const std::string& ccy1, const std::string& ccy2) const
     {
         auto it = find_if(begin(traded_pairs), end(traded_pairs), [&](const auto& ccyPair) {
             return ccyPair->is(ccy1, ccy2);
@@ -44,7 +44,7 @@ public:
         return (*it)->quote();
     }
 
-    std::vector<Quote> get_all_quotes()
+    std::vector<Quote> get_all_quotes() const
     {
         std::vector<Quote> quotes;
         quotes.reserve(traded_pairs.size());
@@ -54,7 +54,7 @@ public:
         return quotes;
     };
 
-    std::array<Quote, 3> get_a_random_triangle()
+    std::array<Quote, 3> get_a_random_triangle() const
     {
         const size_t N = traded_pairs.size() - num_real;
         const size_t ccy_index = rand() % N + num_real;
