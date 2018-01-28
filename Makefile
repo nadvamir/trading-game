@@ -14,9 +14,12 @@ all: test
 
 exchange: test
 
-fxbattle: test
+fxbattle: test static
 	cd build && make FXBattle.exe
 	./build/FXBattle.exe
+
+static: build
+	cd build && make static
 
 test: build
 	cd build && make Test.exe
@@ -24,6 +27,7 @@ test: build
 
 build:
 	mkdir build
+	mkdir build/templates
 	cd build && cmake ..
 
 clean:

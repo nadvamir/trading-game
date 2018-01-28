@@ -5,7 +5,10 @@ int main()
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")([](){
-        return "Hello world";
+        crow::mustache::context x;
+    
+        auto page = crow::mustache::load("index.html");
+        return page.render(x);
     });
 
     app.port(18080).multithreaded().run();
