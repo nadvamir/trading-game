@@ -20,22 +20,36 @@ describe("Currency", []{
         });
 
         it("applies the spread to the quote", [&]{
-            Quote qUSDGBP = GBPUSD.quote();
+            Quote qGBPUSD = GBPUSD.quote();
             Quote qEURGBP = EURGBP.quote();
-            AssertThat(qUSDGBP.ask - qUSDGBP.bid, EqualsWithDelta(0.0004, EPS));
+            AssertThat(qGBPUSD.ask - qGBPUSD.bid, EqualsWithDelta(0.0004, EPS));
             AssertThat(qEURGBP.ask - qEURGBP.bid, EqualsWithDelta(0.0002, EPS));
         });
 
         it("provides mid for convenience", [&]{
-            Quote qUSDGBP = GBPUSD.quote();
-            AssertThat(qUSDGBP.mid, IsGreaterThan(qUSDGBP.bid));
-            AssertThat(qUSDGBP.mid, IsLessThan(qUSDGBP.ask));
+            Quote qGBPUSD = GBPUSD.quote();
+            AssertThat(qGBPUSD.mid, IsGreaterThan(qGBPUSD.bid));
+            AssertThat(qGBPUSD.mid, IsLessThan(qGBPUSD.ask));
         });
 
         it("serialises with the correct precision", [&]{
             std::stringstream ss;
             ss << GBPUSD.quote();
             AssertThat(ss.str(), Equals("GBPUSD 1.4399 1.4403"));
+        });
+
+        it("returns an inverted quote if need be", [&]{
+            // GIVEN:
+            Quote qGBPUSD= GBPUSD.quote();
+            // WHEN:
+            Quote qUSDGBP = qGBPUSD.invert();
+            // THEN:
+            AssertThat(qUSDGBP.ccy_pair, Equals("USDGBP"));
+            AssertThat(qUSDGBP.domestic, Equals("USD"));
+            AssertThat(qUSDGBP.foreign, Equals("GBP"));
+            AssertThat(qUSDGBP.bid, EqualsWithDelta(1/qGBPUSD.bid, EPS));
+            AssertThat(qUSDGBP.mid, EqualsWithDelta(1/qGBPUSD.mid, EPS));
+            AssertThat(qUSDGBP.ask, EqualsWithDelta(1/qGBPUSD.ask, EPS));
         });
     });
 
@@ -72,6 +86,45 @@ describe("Currency", []{
             const double largerMove = 0.5 - GBPUSD.quote().mid;
             const double smallerMove = 0.5 - EURGBP.quote().mid;
             AssertThat(smallerMove, IsLessThan(largerMove));
+        });
+
+        it("alters the rate within reasonable limits", [&]{
+            // GIVEN:
+            const long long eurVolume = 10'000'000'000;
+            Currency EURGBP {"EUR", "GBP", 2ll, 10000, eurVolume};
+            // WHEN:
+            EURGBP.buy(10'000'000);
+            // THEN:
+            const double move = EURGBP.quote().mid - 1.0;
+            AssertThat(move, IsLessThan(0.01));
+            AssertThat(move, IsGreaterThan(0.001));
+        });
+
+        it("does not move the market by much more than 10%", [&]{
+            // GIVEN:
+            const long long eurVolume = 10'000'000'000;
+            Currency EURGBP {"EUR", "GBP", 2ll, 10000, eurVolume};
+            // WHEN:
+            EURGBP.buy(1'000'000'000);
+            // THEN:
+            const double move = EURGBP.quote().mid - 1.0;
+            AssertThat(move, IsLessThan(0.11));
+        });
+
+        it("moves the market proportionally to the rate", [&]{
+            // GIVEN:
+            const long long eurVolume = 10'000'000'000;
+            const long long rate = 10000;
+            Currency EURGBP {"EUR", "GBP", 2ll, rate, eurVolume};
+            Currency GBPUSD {"GBP", "USD", 2ll, 2 * rate, eurVolume};
+            // WHEN:
+            EURGBP.buy(1'000'000);
+            GBPUSD.buy(1'000'000);
+            // THEN:
+            const double moveEUR = EURGBP.quote().mid - 1.0;
+            const double moveGBP = GBPUSD.quote().mid - 2.0;
+            AssertThat(moveEUR, IsLessThan(moveGBP));
+            AssertThat(moveEUR * 2, EqualsWithDelta(moveGBP, EPS));
         });
     });
 

@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <cassert>
 
 namespace exchange {
 
@@ -16,6 +17,14 @@ struct Quote {
     double bid;
     double mid;
     double ask;
+
+    Quote invert() const
+    {
+        return Quote {
+            foreign + domestic, foreign, domestic,
+            1/bid, 1/mid, 1/ask
+        };
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const Quote& q)
     {
@@ -60,11 +69,13 @@ public:
 
     void buy(long long amount) const
     {
+        assert(amount > 0);
         rate_bp.fetch_add(calculate_move(amount));
     }
 
     void sell(long long amount) const
     {
+        assert(amount > 0);
         rate_bp.fetch_add(-calculate_move(amount));
     }
 
@@ -87,8 +98,9 @@ public:
 private:
     long long calculate_move(long long amount) const
     {
-        const double increase = 1.0 + 10 * double(amount) / double(volume);
-        return 10000 * increase * increase; 
+        double increase = 1.0 + 3.0 * double(amount) / double(volume);
+        increase = std::min(increase, 1.05);
+        return rate_bp * (increase * increase - 1.0); 
     }
 };
 
