@@ -10,12 +10,16 @@ TEST_SOURCES += test/exchange_fxconverter.test.cpp
 
 all: test
 
-.PHONY: test exchange
+.PHONY: test exchange fxbattle
 
 exchange: test
 
+fxbattle: test
+	cd build && make FXBattle.exe
+	./build/FXBattle.exe
+
 test: build
-	cd build && make
+	cd build && make Test.exe
 	./build/Test.exe --reporter=spec
 
 build:
