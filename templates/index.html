@@ -56,6 +56,17 @@ canvas {
     margin-top: 15px;
 }
 
+table {
+    width: 100%;
+}
+.name {
+    width: 70%;
+    text-align: left;
+}
+.balance {
+    text-align: right;
+}
+
 </style>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
@@ -68,8 +79,7 @@ canvas {
     <section class="charts" id="charts">
     </section>
 
-    <section class="players">
-        players go here<br/>
+    <section id="accounts">
     </section>
 </div>
 <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -223,8 +233,30 @@ function updateCharts(data) {
     }
 }
 
+function updateAccounts(data) {
+    let sorted_accounts = [];
+    for (let name in data) {
+        sorted_accounts.push([data[name], name]);
+    }
+    sorted_accounts.sort((a, b) => { return a[0] < b[0]; });
+
+    var accounts = '<table><tr><th class="name">Name</th><th class="balance">&pound;</th></tr>';
+    for (let i in sorted_accounts) {
+        let name = sorted_accounts[i][1];
+        let balance = sorted_accounts[i][0];
+        accounts += '<tr><td class="name">' + name + '</td><td class="balance">' + balance + '</td></tr>';
+    }
+    accounts += '</table>';
+
+    $('#accounts').html(accounts);
+}
+
 setInterval(function() {
     $.get('market', [], updateCharts);
+}, 2000);
+
+setInterval(function() {
+    $.get('accounts', [], updateAccounts);
 }, 2000);
 
 </script>

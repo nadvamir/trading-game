@@ -3,8 +3,10 @@
 #include <exchange_market.h>
 #include <exchange_randomtrader.h>
 #include <exchange_arbitragedestroyer.h>
+#include <exchange_brokerage.h>
 #include <thread>
 #include <chrono>
+#include <cmath>
 
 int main()
 {
@@ -36,6 +38,12 @@ int main()
         }
     });
 
+    Brokerage brokerage {{
+        {"api_key1", Brokerage::A{new Account{"Kondratiy", {{"GBP", 10000.0}, {"USD", 10000.0}}, market}}},
+        {"api_key2", Brokerage::A{new Account{"Potap", {{"GBP", 10000.0}, {"EUR", 10000.0}}, market}}},
+    }, market};
+
+    //--------------------------------------------------------------------------
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")([](){
@@ -45,11 +53,20 @@ int main()
         return page.render(x);
     });
 
-    CROW_ROUTE(app, "/market")([&]{
+    CROW_ROUTE(app, "/market")([&market]{
         crow::json::wvalue x;
         const auto quotes = market.get_all_quotes();
         for (const auto& quote: quotes) {
             x[quote.ccy_pair] = quote.to_string();
+        }
+        return x;
+    });
+
+    CROW_ROUTE(app, "/accounts")([&brokerage]{
+        crow::json::wvalue x;
+        const auto accounts = brokerage.accounts_under_management("GBP");
+        for (const auto& [name, balance]: accounts) {
+            x[name] = round(balance);
         }
         return x;
     });
