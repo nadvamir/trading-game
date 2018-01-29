@@ -19,7 +19,7 @@ describe("Brokerage", []{
     Brokerage brokerage {{
         {"api_key1", Brokerage::A{new Account{"Kondratiy", {{"GBP", 1000.0}}, market}}},
         {"api_key2", Brokerage::A{new Account{"Potap", {{"USD", 1000.0}}, market}}},
-    }};
+    }, 10, "GBP"};
 
     describe("Reporting", [&]{
         it("provides a list of accounts it manages", [&]{
@@ -58,7 +58,7 @@ describe("Brokerage", []{
                 {"api_key1", Brokerage::A{new Account{
                     "Kondratiy", {{"GBP", 1000.0}}, market
                 }}},
-            }};
+            }, 10, "GBP"};
             // WHEN:
             auto holdings1 = brokerage2.sell("api_key1", 200, "GBP", "USD");
             auto holdings2 = brokerage2.buy("api_key1", 100, "EUR", "USD");

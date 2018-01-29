@@ -11,10 +11,12 @@ public:
     using A = std::shared_ptr<Account>;
 private:
     std::map<std::string, A> accounts;
+    const double fee;
+    const std::string fee_ccy;
 
 public:
-    Brokerage(std::map<std::string, A> accounts)
-        : accounts(accounts)
+    Brokerage(std::map<std::string, A> accounts, double fee, std::string fee_ccy)
+        : accounts(accounts), fee(fee), fee_ccy(fee_ccy)
     {
     }
 
@@ -38,7 +40,7 @@ public:
             const std::string& buy_ccy,
             const std::string& sell_ccy)
     {
-        get_account(api_key).buy(amount, buy_ccy, sell_ccy, 10, "GBP");
+        get_account(api_key).buy(amount, buy_ccy, sell_ccy, fee, fee_ccy);
         return get_holdings(api_key);
     }
 
@@ -48,7 +50,7 @@ public:
             const std::string& sell_ccy,
             const std::string& buy_ccy)
     {
-        get_account(api_key).sell(amount, sell_ccy, buy_ccy, 10, "GBP");
+        get_account(api_key).sell(amount, sell_ccy, buy_ccy, fee, fee_ccy);
         return get_holdings(api_key);
     }
 
