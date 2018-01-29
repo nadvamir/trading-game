@@ -11,7 +11,7 @@ class Account {
     std::map<std::string, double> balances;
     Market& market;
     FXConverter converter;
-    std::mutex balance_mutex;
+    mutable std::mutex balance_mutex;
 
 public:
     Account(
@@ -25,12 +25,18 @@ public:
     {
     }
 
-    std::string get_name() 
+    std::string get_name() const
     {
         return name;
     }
 
-    double get_value_in(const std::string& reporting_ccy)
+    std::map<std::string, double> get_holdings() const
+    {
+        std::lock_guard<std::mutex> guard(balance_mutex);
+        return balances;
+    }
+
+    double get_value_in(const std::string& reporting_ccy) const
     {
         std::lock_guard<std::mutex> guard(balance_mutex);
         double value = 0.0;
@@ -38,6 +44,51 @@ public:
             value += converter.convert(balance, ccy, reporting_ccy);
         }
         return value;
+    }
+    
+    void buy(
+            double amount,
+            const std::string& ccy_buy,
+            const std::string& ccy_sell,
+            double fee,
+            const std::string& ccy_fee)
+    {
+        if (amount < 0) {
+            throw std::runtime_error("Negative amount");
+        }
+        const double price_est = converter.convert(amount, ccy_buy, ccy_sell);
+        const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
+
+        std::lock_guard<std::mutex> guard(balance_mutex);
+        if (price_est > balances[ccy_sell]) {
+            throw std::runtime_error("Not enough "+ccy_sell+" for the transaction!");
+        }
+
+        const double price = market.buy(ccy_buy, ccy_sell, amount);
+        balances[ccy_buy] += amount - fee_in_ccy_buy;
+        balances[ccy_sell] += price;
+    }
+
+    void sell(
+            double amount,
+            const std::string& ccy_sell,
+            const std::string& ccy_buy,
+            double fee,
+            const std::string& ccy_fee)
+    {
+        if (amount < 0) {
+            throw std::runtime_error("Negative amount");
+        }
+        const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
+
+        std::lock_guard<std::mutex> guard(balance_mutex);
+        if (amount > balances[ccy_sell]) {
+            throw std::runtime_error("Not enough "+ccy_sell+" for the transaction!");
+        }
+
+        const double gain = market.sell(ccy_sell, ccy_buy, amount);
+        balances[ccy_buy] += gain - fee_in_ccy_buy;
+        balances[ccy_sell] -= amount;
     }
 };
 } // namespace exchange
