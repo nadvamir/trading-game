@@ -121,7 +121,7 @@ describe("Account", []{
             AssertThrows(std::runtime_error, account.sell(4000, "GBP", "EUR", 1, "GBP"));
         });
 
-        it("throws when trying to buy or sell a negative amount", [&]{
+        it("throws when trying to buy or sell an invalid amount", [&]{
             // GIVEN:
             Account account {"Potap", {
                 {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}
@@ -129,6 +129,8 @@ describe("Account", []{
             // WHEN & THEN:
             AssertThrows(std::runtime_error, account.buy(-1, "GBP", "EUR", 1, "GBP"));
             AssertThrows(std::runtime_error, account.sell(-1, "GBP", "EUR", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.buy(0, "GBP", "EUR", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.sell(0, "GBP", "EUR", 1, "GBP"));
         });
     });
 });

@@ -53,8 +53,8 @@ public:
             double fee,
             const std::string& ccy_fee)
     {
-        if (amount < 0) {
-            throw std::runtime_error("Negative amount");
+        if (amount <= 0) {
+            throw std::runtime_error("Invalid amount");
         }
         const double price_est = converter.convert(amount, ccy_buy, ccy_sell);
         const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
@@ -76,8 +76,8 @@ public:
             double fee,
             const std::string& ccy_fee)
     {
-        if (amount < 0) {
-            throw std::runtime_error("Negative amount");
+        if (amount <= 0) {
+            throw std::runtime_error("Invalid amount");
         }
         const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
 
