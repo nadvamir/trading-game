@@ -71,6 +71,20 @@ int main()
         return x;
     });
 
+    CROW_ROUTE(app, "/account/<string>")([&brokerage](const auto& api_key){
+        crow::json::wvalue x;
+        try {
+            const auto holdings = brokerage.get_holdings(api_key);
+            for (const auto& [ccy, balance]: holdings) {
+                x[ccy] = balance;
+            }
+        }
+        catch (std::runtime_error& e) {
+            x["error"] = e.what();
+        }
+        return x;
+    });
+
     app.port(18080).multithreaded().run();
 }
 
