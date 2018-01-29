@@ -22,14 +22,13 @@ describe("RandomTrader", []{
 
     it("moves the market with their trades", [&]{
         // GIVEN:
-        const long long min_trade = 10'000'000;
-        const long long max_trade = 30'000'000;
-        RandomTrader trader(market, min_trade, max_trade);
+        const long long avg_trade = 3'000'000;
+        RandomTrader trader(market, avg_trade);
         double min_rate = bp_to_double(init_rate);
         double max_rate = bp_to_double(init_rate);
 
         // WHEN:
-        for (size_t i = 0; i < 1000; ++i) {
+        for (size_t i = 0; i < 10000; ++i) {
             trader.trade();
             double new_rate = market.get_quote("GBP", "USD").mid;
             min_rate = std::min(new_rate, min_rate);

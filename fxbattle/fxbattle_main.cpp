@@ -23,7 +23,7 @@ int main()
     };
     Market market {traded_pairs, "USD"};
 
-    RandomTrader trader {market, 3'000'000, 7'000'000};
+    RandomTrader trader {market, 3'000'000};
     std::thread market_mover([&trader]{
         while (true) {
             trader.trade();
