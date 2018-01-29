@@ -8,15 +8,14 @@
 #include <chrono>
 #include <cmath>
 #include <fstream>
-#include <sstream>
+#include <iterator>
 
 std::string read_file(std::string filename)
 {
-    std::stringstream ss;
     std::ifstream fr(filename);
-    std::string line;
-    while (getline(fr, line)) ss << line << "\n";
-    return ss.str();
+    std::istreambuf_iterator<char> begin(fr), end;
+    std::string file_contents(begin, end);
+    return file_contents;
 }
 
 int main()
