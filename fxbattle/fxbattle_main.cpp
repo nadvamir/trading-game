@@ -7,11 +7,24 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
+#include <fstream>
+#include <sstream>
+
+std::string read_file(std::string filename)
+{
+    std::stringstream ss;
+    std::ifstream fr(filename);
+    std::string line;
+    while (getline(fr, line)) ss << line << "\n";
+    return ss.str();
+}
 
 int main()
 {
     using namespace exchange;
     using namespace std::chrono_literals;
+
+    auto config = crow::json::load(read_file("config.json"));
 
     Market::TradedPairs traded_pairs{
         Market::CP{new Currency{"EUR", "USD", 2ll, 12427, 250'000'000'000}},
@@ -23,25 +36,29 @@ int main()
     };
     Market market {traded_pairs, "USD"};
 
-    RandomTrader trader {market, 3'000'000};
-    std::thread market_mover([&trader]{
+    RandomTrader trader {market, config["mover_trade_size"].i()};
+    std::thread market_mover([&]{
         while (true) {
             trader.trade();
-            std::this_thread::sleep_for(30ms);
+            auto interval = std::chrono::milliseconds(config["trade_interval"].i());
+            std::this_thread::sleep_for(interval);
         }
     });
 
-    std::thread arbitrage_destroyer([&market]{
+    std::thread arbitrage_destroyer([&]{
         while (true) {
             ArbitrageDestroyer::normalise(market);
-            std::this_thread::sleep_for(5ms);
+            auto interval = std::chrono::milliseconds(config["arbitrage_interval"].i());
+            std::this_thread::sleep_for(interval);
         }
     });
 
+    auto currency = config["currency"].s();
+
     Brokerage brokerage {{
-        {"api_key1", Brokerage::A{new Account{"Kondratiy", {{"GBP", 10000000.0}}, market}}},
-        {"api_key2", Brokerage::A{new Account{"Potap", {{"GBP", 10000000.0}}, market}}},
-    }, 10, "GBP"};
+        {"api_key1", Brokerage::A{new Account{"Kondratiy", {{currency, config["init_amount"].d()}}, market}}},
+        {"api_key2", Brokerage::A{new Account{"Potap", {{currency, config["init_amount"].d()}}, market}}},
+    }, config["fee_amount"].d(), currency};
 
     //--------------------------------------------------------------------------
     crow::SimpleApp app;
