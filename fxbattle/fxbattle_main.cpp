@@ -27,7 +27,7 @@ int main()
     std::thread market_mover([&trader]{
         while (true) {
             trader.trade();
-            std::this_thread::sleep_for(3ms);
+            std::this_thread::sleep_for(30ms);
         }
     });
 
@@ -39,8 +39,8 @@ int main()
     });
 
     Brokerage brokerage {{
-        {"api_key1", Brokerage::A{new Account{"Kondratiy", {{"GBP", 10000.0}}, market}}},
-        {"api_key2", Brokerage::A{new Account{"Potap", {{"GBP", 10000.0}}, market}}},
+        {"api_key1", Brokerage::A{new Account{"Kondratiy", {{"GBP", 10000000.0}}, market}}},
+        {"api_key2", Brokerage::A{new Account{"Potap", {{"GBP", 10000000.0}}, market}}},
     }, 10, "GBP"};
 
     //--------------------------------------------------------------------------
@@ -85,11 +85,11 @@ int main()
         return x;
     });
 
-    CROW_ROUTE(app, "/trade/<string>/<string>/<string>/<int>")
+    CROW_ROUTE(app, "/trade/<string>/<string>/<string>/<double>")
     ([&brokerage](const auto& api_key,
                   const auto& direction,
                   const auto& ccy_pair,
-                  long amount) {
+                  double amount) {
         crow::json::wvalue x;
         try {
             if (ccy_pair.size() != 6) throw std::runtime_error("Wrong ccy pair");
