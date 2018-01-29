@@ -85,6 +85,31 @@ int main()
         return x;
     });
 
+    CROW_ROUTE(app, "/trade/<string>/<string>/<string>/<int>")
+    ([&brokerage](const auto& api_key,
+                  const auto& direction,
+                  const auto& ccy_pair,
+                  long amount) {
+        crow::json::wvalue x;
+        try {
+            if (ccy_pair.size() != 6) throw std::runtime_error("Wrong ccy pair");
+            const auto ccy1 = ccy_pair.substr(0, 3);
+            const auto ccy2 = ccy_pair.substr(3);
+
+            const auto holdings = (direction == "buy")
+                                ? brokerage.buy(api_key, amount, ccy1, ccy2)
+                                : brokerage.sell(api_key, amount, ccy1, ccy2);
+
+            for (const auto& [ccy, balance]: holdings) {
+                x[ccy] = balance;
+            }
+        }
+        catch (std::runtime_error& e) {
+            x["error"] = e.what();
+        }
+        return x;
+    });
+
     app.port(18080).multithreaded().run();
 }
 
