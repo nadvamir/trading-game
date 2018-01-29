@@ -22,7 +22,7 @@ describe("RandomTrader", []{
 
     it("moves the market with their trades", [&]{
         // GIVEN:
-        const long long avg_trade = 3'000'000;
+        const long long avg_trade = 5'000'000;
         RandomTrader trader(market, avg_trade);
         double min_rate = bp_to_double(init_rate);
         double max_rate = bp_to_double(init_rate);

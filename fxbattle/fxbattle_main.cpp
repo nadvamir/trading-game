@@ -41,7 +41,7 @@ int main()
     Brokerage brokerage {{
         {"api_key1", Brokerage::A{new Account{"Kondratiy", {{"GBP", 10000.0}, {"USD", 10000.0}}, market}}},
         {"api_key2", Brokerage::A{new Account{"Potap", {{"GBP", 10000.0}, {"EUR", 10000.0}}, market}}},
-    }, market};
+    }};
 
     //--------------------------------------------------------------------------
     crow::SimpleApp app;

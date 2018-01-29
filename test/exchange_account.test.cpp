@@ -130,7 +130,6 @@ describe("Account", []{
             AssertThrows(std::runtime_error, account.buy(-1, "GBP", "EUR", 1, "GBP"));
             AssertThrows(std::runtime_error, account.sell(-1, "GBP", "EUR", 1, "GBP"));
         });
-
     });
 });
 });
