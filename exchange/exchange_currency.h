@@ -98,8 +98,8 @@ public:
 
     bool is(const std::string& ccy1, const std::string& ccy2) const
     {
-        return foreign == ccy1 && domestic == ccy2
-            || foreign == ccy2 && domestic == ccy1;
+        return (foreign == ccy1 && domestic == ccy2)
+            || (foreign == ccy2 && domestic == ccy1);
     }
 
 private:

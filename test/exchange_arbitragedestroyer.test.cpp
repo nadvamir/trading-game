@@ -65,7 +65,7 @@ describe("ArbitrageDestroyer", []{
         }
 
         // THEN:
-        AssertThat(rates.size(), Equals(6));
+        AssertThat(rates.size(), Equals(6ul));
     });
 });
 });

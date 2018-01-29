@@ -2,7 +2,7 @@
 <head>
 <title>FX Battle</title>
 <style>
-@import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Cinzel+Decorative');
 body {
     background: #1b1b1b;
     color: #ffbf00;
@@ -10,17 +10,21 @@ body {
 }
 .container {
     display: grid;
-    grid-template-columns: 3fr 1fr;
+    grid-template-columns: 4fr 1fr;
     grid-template-rows: 80px 1fr;
     grid-template-areas:
         "header header"
         "charts players";
     height: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 .container > header {
     grid-area: header;
     font-size: 4em;
+    text-align: center;
+    font-family: 'Cinzel Decorative', 'sans-serif';
 }
 
 .charts {

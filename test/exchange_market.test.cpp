@@ -21,7 +21,7 @@ describe("Market", []{
 
     describe("creation", [&]{
         it("determines how many 'real' currency pairs there are", [&]{
-            AssertThat(market.num_real_currencies(), Equals(3));
+            AssertThat(market.num_real_currencies(), Equals(3ul));
         });
     });
 
@@ -37,13 +37,13 @@ describe("Market", []{
 
         it("returns all quotes", [&]{
             auto quotes = market.get_all_quotes();
-            AssertThat(quotes.size(), Equals(4));
+            AssertThat(quotes.size(), Equals(4ul));
             AssertThat(quotes[3].ccy_pair, Equals("EURGBP"));
         });
 
         it("returns a triangle of quotes from a ccy pair to the real ccy", [&]{
             auto quotes = market.get_a_random_triangle();
-            AssertThat(quotes.size(), Equals(3));
+            AssertThat(quotes.size(), Equals(3ul));
             AssertThat(quotes[0].ccy_pair, Equals("EURGBP"));
             AssertThat(quotes[1].ccy_pair, Equals("EURUSD"));
             AssertThat(quotes[2].ccy_pair, Equals("GBPUSD"));
@@ -57,7 +57,7 @@ describe("Market", []{
                 quotes.insert(market.get_a_random_quote().ccy_pair);
             }
             // THEN:
-            AssertThat(quotes.size(), Equals(4));
+            AssertThat(quotes.size(), Equals(4ul));
         });
     });
 
