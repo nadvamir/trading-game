@@ -30,7 +30,7 @@ describe("RandomTrader", []{
         // WHEN:
         for (size_t i = 0; i < 10000; ++i) {
             trader.trade();
-            double new_rate = market.get_quote("GBP", "USD").mid;
+            double new_rate = market.get_quote("GBP", "EUR").mid;
             min_rate = std::min(new_rate, min_rate);
             max_rate = std::max(new_rate, max_rate);
         }

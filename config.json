@@ -1,7 +1,7 @@
 {
-    "trade_interval": 30,
-    "arbitrage_interval": 5,
-    "mover_trade_size": 3000000,
+    "trade_interval": 50,
+    "arbitrage_interval": 300,
+    "mover_trade_size": 100000000,
     "init_amount": 10000000.0,
     "fee_amount": 10.0,
     "currency": "GBP"

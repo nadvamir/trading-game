@@ -47,6 +47,7 @@ class Currency {
     std::string foreign;
     long long spread;
     mutable std::atomic_llong rate_bp;
+    long long init_rate;
     long long volume;
 
 public:
@@ -60,6 +61,7 @@ public:
         , foreign(foreign)
         , spread(spread)
         , rate_bp(rate)
+        , init_rate(rate)
         , volume(volume)
     {
     }
@@ -77,13 +79,13 @@ public:
     void buy(long long amount) const
     {
         assert(amount > 0);
-        rate_bp.fetch_add(calculate_move(amount));
+        rate_bp.fetch_add(calculate_move(amount, 1));
     }
 
     void sell(long long amount) const
     {
         assert(amount > 0);
-        rate_bp.fetch_add(-calculate_move(amount));
+        rate_bp.fetch_add(calculate_move(amount, -1));
     }
 
     void set_rate(double rate) const
@@ -103,11 +105,14 @@ public:
     }
 
 private:
-    long long calculate_move(long long amount) const
+    long long calculate_move(long long amount, long long direction) const
     {
-        double increase = 1.0 + 3.0 * double(amount) / double(volume);
-        increase = std::min(increase, 1.05);
-        return rate_bp * (increase * increase - 1.0); 
+        double delta = double(amount) / double(volume) * 2000;
+        if (amount >= 1'000'000) delta += 1;
+        const bool rebounding = rate_bp * 1.2 < init_rate && direction > 0;
+        const bool dampening = rate_bp * 0.8 > init_rate && direction < 0;
+        if (rebounding || dampening) delta *= 2;
+        return delta * direction;
     }
 };
 

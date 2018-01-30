@@ -81,8 +81,8 @@ describe("Currency", []{
             Currency EURGBP {"EUR", "GBP", 2ll, initRate, eurVolume};
             Currency GBPUSD {"GBP", "USD", 2ll, initRate, usdVolume};
             // WHEN:
-            EURGBP.sell(1'000'000);
-            GBPUSD.sell(1'000'000);
+            EURGBP.sell(10'000'000);
+            GBPUSD.sell(10'000'000);
             // THEN:
             const double largerMove = 0.5 - GBPUSD.quote().mid;
             const double smallerMove = 0.5 - EURGBP.quote().mid;
@@ -97,35 +97,53 @@ describe("Currency", []{
             EURGBP.buy(10'000'000);
             // THEN:
             const double move = EURGBP.quote().mid - 1.0;
-            AssertThat(move, IsLessThan(0.01));
-            AssertThat(move, IsGreaterThan(0.001));
+            AssertThat(move, IsLessThan(0.001));
+            AssertThat(move, IsGreaterThan(0.0001));
         });
 
-        it("does not move the market by much more than 10%", [&]{
+        it("moves the market downwards more if the price went too hight", [&]{
             // GIVEN:
-            const long long eurVolume = 10'000'000'000;
+            const long long rate = 10000;
+            Currency EURGBP {"EUR", "GBP", 2ll, rate, 10'000'000'000};
+
+            // WHEN:
+            EURGBP.set_rate(2.0);
+            EURGBP.buy(10'000'000);
+            const double moveUp = EURGBP.quote().mid - 2.0;
+            EURGBP.set_rate(2.0);
+            EURGBP.sell(10'000'000);
+            const double moveDown = -(EURGBP.quote().mid - 2.0);
+
+            // THEN:
+            AssertThat(moveUp + EPS, IsLessThan(moveDown));
+        });
+
+        it("moves the market upwards more if the price went too low", [&]{
+            // GIVEN:
+            const long long rate = 10000;
+            Currency EURGBP {"EUR", "GBP", 2ll, rate, 10'000'000'000};
+
+            // WHEN:
+            EURGBP.set_rate(0.5);
+            EURGBP.buy(10'000'000);
+            const double moveUp = EURGBP.quote().mid - 0.5;
+            EURGBP.set_rate(0.5);
+            EURGBP.sell(10'000'000);
+            const double moveDown = -(EURGBP.quote().mid - 0.5);
+
+            // THEN:
+            AssertThat(moveDown + EPS, IsLessThan(moveUp));
+        });
+
+        it("moves the market by at least 1bp with a 1M trade regardless of volume", [&]{
+            // GIVEN:
+            const long long eurVolume = 10'000'000'000'000;
             Currency EURGBP {"EUR", "GBP", 2ll, 10000, eurVolume};
             // WHEN:
-            EURGBP.buy(1'000'000'000);
+            EURGBP.buy(10'000'000);
             // THEN:
             const double move = EURGBP.quote().mid - 1.0;
-            AssertThat(move, IsLessThan(0.11));
-        });
-
-        it("moves the market proportionally to the rate", [&]{
-            // GIVEN:
-            const long long eurVolume = 10'000'000'000;
-            const long long rate = 10000;
-            Currency EURGBP {"EUR", "GBP", 2ll, rate, eurVolume};
-            Currency GBPUSD {"GBP", "USD", 2ll, 2 * rate, eurVolume};
-            // WHEN:
-            EURGBP.buy(1'000'000);
-            GBPUSD.buy(1'000'000);
-            // THEN:
-            const double moveEUR = EURGBP.quote().mid - 1.0;
-            const double moveGBP = GBPUSD.quote().mid - 2.0;
-            AssertThat(moveEUR, IsLessThan(moveGBP));
-            AssertThat(moveEUR * 2, EqualsWithDelta(moveGBP, EPS));
+            AssertThat(move, IsGreaterThan(0.00009));
         });
     });
 
