@@ -134,6 +134,13 @@ describe("Account", []{
             AssertThat(holdings["USD"], IsGreaterThan(4900.0));
         });
 
+        it("forbids selling when the balance turns negative", [&]{
+            // GIVEN:
+            Account account {"Potap", {{"EUR", -1000.0}}, market};
+            // WHEN & THEN:
+            AssertThrows(std::runtime_error, account.sell(10, "EUR", "USD", 1, "GBP"));
+        });
+
         it("throws when trying to buy or sell an invalid amount", [&]{
             // GIVEN:
             Account account {"Potap", {
