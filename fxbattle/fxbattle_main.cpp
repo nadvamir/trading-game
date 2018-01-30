@@ -44,6 +44,15 @@ int main()
         }
     });
 
+    RandomTrader chaos_trader {market, config["chaos_trade_size"].i()};
+    std::thread chaos_mover([&]{
+        while (true) {
+            chaos_trader.trade();
+            auto interval = std::chrono::milliseconds(config["chaos_interval"].i());
+            std::this_thread::sleep_for(interval);
+        }
+    });
+
     std::thread arbitrage_destroyer([&]{
         while (true) {
             ArbitrageDestroyer::normalise(market);
