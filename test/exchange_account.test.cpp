@@ -83,7 +83,7 @@ describe("Account", []{
                 {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}
             }, market};
             // WHEN & THEN:
-            AssertThrows(std::runtime_error, account.buy(1000, "GBP", "EUR", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.buy(10000, "GBP", "EUR", 1, "GBP"));
         });
 
         it("can get into negative as a result of execution of the trade", [&]{
@@ -118,7 +118,20 @@ describe("Account", []{
                 {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}
             }, market};
             // WHEN & THEN:
-            AssertThrows(std::runtime_error, account.sell(4000, "GBP", "EUR", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.sell(12010, "GBP", "EUR", 1, "GBP"));
+        });
+
+        it("has an overdraft of 10000 units of currency", [&]{
+            // GIVEN:
+            Account account {"Potap", {
+                {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}
+            }, market};
+            // WHEN:
+            account.sell(10000, "EUR", "USD", 10, "GBP");
+            // THEN:
+            auto holdings = account.get_holdings();
+            AssertThat(holdings["EUR"], EqualsWithDelta(-9000.0, EPS));
+            AssertThat(holdings["USD"], IsGreaterThan(4900.0));
         });
 
         it("throws when trying to buy or sell an invalid amount", [&]{

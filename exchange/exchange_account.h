@@ -13,6 +13,8 @@ class Account {
     FXConverter converter;
     mutable std::mutex balance_mutex;
 
+    static constexpr double overdraft {10'000.0};
+
 public:
     Account(
             std::string name,
@@ -45,7 +47,7 @@ public:
         }
         return value;
     }
-    
+
     void buy(
             double amount,
             const std::string& ccy_buy,
@@ -60,7 +62,7 @@ public:
         const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
 
         std::lock_guard<std::mutex> guard(balance_mutex);
-        if (price_est > balances[ccy_sell]) {
+        if (price_est > balances[ccy_sell] + overdraft) {
             throw std::runtime_error("Not enough "+ccy_sell+" for the transaction!");
         }
 
@@ -82,7 +84,7 @@ public:
         const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
 
         std::lock_guard<std::mutex> guard(balance_mutex);
-        if (amount > balances[ccy_sell]) {
+        if (amount > balances[ccy_sell] + overdraft) {
             throw std::runtime_error("Not enough "+ccy_sell+" for the transaction!");
         }
 
