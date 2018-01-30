@@ -1,0 +1,32 @@
+{
+    "EURUSD": {
+        "spread": 2,
+        "rate": 1.2427,
+        "volume": 250000000000
+    },
+    "GBPUSD": {
+        "spread": 4,
+        "rate": 1.417,
+        "volume": 68000000000
+    },
+    "USDJPY": {
+        "spread": 4,
+        "rate": 108.8139,
+        "volume": 64000000000
+    },
+    "EURJPY": {
+        "spread": 6,
+        "rate": 135.2231,
+        "volume": 30000000000
+    },
+    "EURGBP": {
+        "spread": 4,
+        "rate": 0.877,
+        "volume": 20000000000
+    },
+    "GBPJPY": {
+        "spread": 8,
+        "rate": 154.1926,
+        "volume": 5000000000
+    }
+}

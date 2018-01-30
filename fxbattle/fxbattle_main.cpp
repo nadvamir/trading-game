@@ -18,21 +18,39 @@ std::string read_file(std::string filename)
     return file_contents;
 }
 
+auto get_config(std::string filename)
+{
+    return crow::json::load(read_file(filename));
+}
+
+exchange::Market::TradedPairs get_traded_pairs(std::string filename)
+{
+    using namespace exchange;
+    Market::TradedPairs traded_pairs;
+
+    auto pairs = get_config(filename);
+    for (const auto& ccy_pair: pairs) {
+        std::string ccys = ccy_pair.key();
+
+        traded_pairs.push_back(Market::CP{new Currency{
+            ccys.substr(0, 3),
+            ccys.substr(3),
+            ccy_pair["spread"].i(),
+            double_to_bp(ccy_pair["rate"].d()),
+            ccy_pair["volume"].i()
+        }});
+    }
+    return traded_pairs;
+}
+
 int main()
 {
     using namespace exchange;
     using namespace std::chrono_literals;
 
-    auto config = crow::json::load(read_file("config.json"));
+    auto config = get_config("config.json");
 
-    Market::TradedPairs traded_pairs{
-        Market::CP{new Currency{"EUR", "USD", 2ll, 12427, 250'000'000'000}},
-        Market::CP{new Currency{"GBP", "USD", 4ll, 14170, 68'000'000'000}},
-        Market::CP{new Currency{"USD", "JPY", 4ll, 1088139, 64'000'000'000}},
-        Market::CP{new Currency{"EUR", "JPY", 6ll, 1352231, 30'000'000'000}},
-        Market::CP{new Currency{"EUR", "GBP", 4ll, 8770, 20'000'000'000}},
-        Market::CP{new Currency{"GBP", "JPY", 8ll, 1541926, 5'000'000'000}},
-    };
+    Market::TradedPairs traded_pairs = get_traded_pairs("traded_pairs.json");
     Market market {traded_pairs, "USD"};
 
     RandomTrader trader {market, config["mover_trade_size"].i()};
