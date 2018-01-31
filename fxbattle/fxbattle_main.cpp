@@ -23,7 +23,7 @@ auto get_config(std::string filename)
     return crow::json::load(read_file(filename));
 }
 
-exchange::Market::TradedPairs get_traded_pairs(std::string filename)
+auto get_traded_pairs(std::string filename)
 {
     using namespace exchange;
     Market::TradedPairs traded_pairs;
@@ -43,6 +43,27 @@ exchange::Market::TradedPairs get_traded_pairs(std::string filename)
     return traded_pairs;
 }
 
+auto get_accounts(
+        std::string filename,
+        const crow::json::rvalue& config,
+        exchange::Market& market)
+{
+    using namespace exchange;
+    std::map<std::string, Brokerage::A> accounts;
+
+    auto currency = config["currency"].s();
+    auto traders = get_config(filename);
+
+    for (const auto& trader: traders) {
+        std::string api_key = trader.key();
+        std::string name = trader.s();
+        accounts.insert({api_key, Brokerage::A {
+            new Account {name, {{currency, config["init_amount"].d()}}, market}
+        }});
+    }
+    return accounts;
+}
+
 int main()
 {
     using namespace exchange;
@@ -53,6 +74,13 @@ int main()
     Market::TradedPairs traded_pairs = get_traded_pairs("traded_pairs.json");
     Market market {traded_pairs, "USD"};
 
+    Brokerage brokerage {
+        get_accounts("traders.json", config, market),
+        config["fee_amount"].d(),
+        config["currency"].s()
+    };
+
+    //--------------------------------------------------------------------------
     RandomTrader trader {market, config["mover_trade_size"].i()};
     std::thread market_mover([&]{
         while (true) {
@@ -78,13 +106,6 @@ int main()
             std::this_thread::sleep_for(interval);
         }
     });
-
-    auto currency = config["currency"].s();
-
-    Brokerage brokerage {{
-        {"api_key1", Brokerage::A{new Account{"Kondratiy", {{currency, config["init_amount"].d()}}, market}}},
-        {"api_key2", Brokerage::A{new Account{"Potap", {{currency, config["init_amount"].d()}}, market}}},
-    }, config["fee_amount"].d(), currency};
 
     //--------------------------------------------------------------------------
     crow::SimpleApp app;
