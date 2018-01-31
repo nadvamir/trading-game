@@ -1,5 +1,7 @@
 # FX Battle
 
+![FX Battle](templates/fxbattle.png)
+
 A not quite optimal fx exchange, providing plenty of opportunity to make money.
 Write trading robots to compete against other traders! The team with most money
 in the end wins.
