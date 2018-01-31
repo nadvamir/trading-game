@@ -7,8 +7,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17 -pedantic -Wextra")
 find_package(Boost 1.52 COMPONENTS system thread REQUIRED)
 
 # includes
-include_directories("exchange")
 include_directories(".")
+include_directories("exchange")
+include_directories("fxbattle")
 
 # sources
 file(GLOB test_SRC
