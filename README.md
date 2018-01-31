@@ -1,6 +1,6 @@
 # FX Battle
 
-A not quite optimal fx exchange providing plenty of opportunity to make money.
+A not quite optimal fx exchange, providing plenty of opportunity to make money.
 Write trading robots to compete against other traders! The team with most money
 in the end wins.
 
@@ -15,6 +15,8 @@ opportunity and danger. Choose your strategies carefully.
 
 It is possible to ensure your transactions are making money. I can neither confirm
 nor deny that this is a winning strategy. I actually can't, don't know yet.
+
+Since we are based in the UK, your success will be measured in British pounds.
 
 ## Trading API's
 
@@ -88,4 +90,16 @@ try to exchange 100 GBP for USD at the market rate.
 You can specify currency pairs in whichever quoting convention is more convenient,
 e.g. if GBPUSD trades at 2.0, then `sell/GBPUSD/100.0` and `buy/USDGBP/200.0`
 are equivalent.
+
+The fixed trading fee will always be applied. It is the same regardless of the
+currency of your trade, e.g. 10 GBP. The fee will be converted at the market rate
+and taken from the amount you are receiving. E.g. if you are selling 100 USD
+and expecting to receive 10000 JPY, and 1 GBP is 200 JPY, you will receive
+8000 JPY.
+
+## Example trader
+
+There's a trading robot in the `example` folder. It shows how to use the API.
+I would not recommend you to run it with your api key, since it's not the smartest
+and every trade you make is live.
 
