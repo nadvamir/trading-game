@@ -8,7 +8,7 @@ TEST_SOURCES += test/exchange_arbitragedestroyer.test.cpp
 TEST_SOURCES += test/exchange_fxconversions.test.cpp
 TEST_SOURCES += test/exchange_fxconverter.test.cpp
 
-all: test
+all: fxbattle
 
 .PHONY: test exchange fxbattle
 
