@@ -63,5 +63,22 @@ inline auto get_accounts(
     return accounts;
 }
 
+inline auto get_market(std::string filename)
+{
+    return exchange::Market {get_traded_pairs(filename), "USD"};
+}
+
+inline auto get_brokerage(
+        std::string filename,
+        const crow::json::rvalue& config,
+        exchange::Market& market)
+{
+    return exchange::Brokerage {
+        get_accounts(filename, config, market),
+        config["fee_amount"].d(),
+        config["currency"].s()
+    };
+}
+
 } // namespace fxbattle
 

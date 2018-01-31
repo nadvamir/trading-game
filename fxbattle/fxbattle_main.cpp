@@ -16,15 +16,8 @@ int main()
     using namespace std::chrono_literals;
 
     auto config = get_config("config.json");
-
-    Market::TradedPairs traded_pairs = get_traded_pairs("traded_pairs.json");
-    Market market {traded_pairs, "USD"};
-
-    Brokerage brokerage {
-        get_accounts("traders.json", config, market),
-        config["fee_amount"].d(),
-        config["currency"].s()
-    };
+    Market market = get_market("traded_pairs.json");
+    Brokerage brokerage = get_brokerage("traders.json", config, market);
 
     //--------------------------------------------------------------------------
     RandomTrader trader {market, config["mover_trade_size"].i()};
