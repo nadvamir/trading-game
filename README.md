@@ -99,7 +99,7 @@ and expecting to receive 10000 JPY, and 1 GBP is 200 JPY, you will receive
 
 ## Example trader
 
-There's a trading robot in the `example` folder. It shows how to use the API.
+[There's a trading robot in the `example` folder.](example/random_trader.py) It shows how to use the API.
 I would not recommend you to run it with your api key, since it's not the smartest
 and every trade you make is live.
 
