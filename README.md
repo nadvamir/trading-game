@@ -105,3 +105,20 @@ and expecting to receive 10000 JPY, and 1 GBP is 200 JPY, you will receive
 I would not recommend you to run it with your api key, since it's not the smartest
 and every trade you make is live.
 
+## Running the exchange
+
+Depends on:
+
+```
+g++-7
+cmake
+libboost-all-dev
+```
+
+With dependencies installed:
+
+```bash
+git clone --recursive https://github.com/nadvamir/trading-game.git
+cd trading-game
+make
+```
