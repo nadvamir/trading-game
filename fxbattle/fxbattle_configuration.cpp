@@ -36,22 +36,29 @@ auto get_traded_pairs(std::string filename)
     return traded_pairs;
 }
 
+auto get_balances(const crow::json::rvalue& json_balances)
+{
+    std::map<std::string, double> balances;
+    for (const auto& account: json_balances) {
+        balances.insert({account.key(), account.d()});
+    }
+    return balances;
+}
+
 auto get_accounts(
         std::string filename,
-        const crow::json::rvalue& config,
         exchange::Market& market)
 {
     using namespace exchange;
     std::map<std::string, Brokerage::A> accounts;
 
-    auto currency = config["currency"].s();
     auto traders = get_config(filename);
 
     for (const auto& trader: traders) {
         std::string api_key = trader.key();
-        std::string name = trader.s();
+        std::string name = trader["name"].s();
         accounts.insert({api_key, Brokerage::A {
-            new Account {name, {{currency, config["init_amount"].d()}}, market}
+            new Account {name, get_balances(trader["balances"]), market}
         }});
     }
     return accounts;
@@ -76,7 +83,7 @@ exchange::Brokerage get_brokerage(
         exchange::Market& market)
 {
     return exchange::Brokerage {
-        get_accounts(filename, config, market),
+        get_accounts(filename, market),
         config["fee_amount"].d(),
         config["currency"].s()
     };

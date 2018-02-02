@@ -15,7 +15,7 @@ int main()
     using namespace exchange;
     using namespace std::chrono_literals;
 
-    auto config = get_config("config.json");
+    const auto config = get_config("config.json");
     Market market = get_market("traded_pairs.json");
     Brokerage brokerage = get_brokerage("traders.json", config, market);
 

@@ -1,5 +1,20 @@
 {
-    "api_key1": "Kondratiy",
-    "api_key2": "Potap",
-    "api_key3": "Isakiy"
+    "api_key1": {
+        "name": "Kondratiy",
+        "balances": {
+            "GBP": 1000000.0
+        }
+    },
+    "api_key2": {
+        "name": "Potap",
+        "balances": {
+            "GBP": 1000000.0
+        }
+    },
+    "api_key3": {
+        "name": "Isakiy",
+        "balances": {
+            "GBP": 1000000.0
+        }
+    }
 }
