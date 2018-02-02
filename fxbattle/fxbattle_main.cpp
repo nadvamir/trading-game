@@ -113,6 +113,6 @@ int main()
         return x;
     });
 
-    app.port(18080).multithreaded().run();
+    app.port(config["port"].i()).multithreaded().run();
 }
 
