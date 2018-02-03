@@ -43,7 +43,12 @@ public:
         std::lock_guard<std::mutex> guard(balance_mutex);
         double value = 0.0;
         for (const auto& [ccy, balance]: balances) {
-            value += converter.convert(balance, ccy, reporting_ccy);
+            try {
+                value += converter.convert(balance, ccy, reporting_ccy);
+            }
+            catch (std::runtime_error& e) {
+                std::cerr << "A currency does not exist: " << ccy << std::endl;
+            }
         }
         return value;
     }

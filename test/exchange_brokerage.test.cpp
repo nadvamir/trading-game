@@ -62,6 +62,23 @@ describe("Brokerage", []{
                          brokerage.sell("fake_api", 1, "EUR", "USD"));
         });
 
+        // it("throws when trying to buy or sell an invalid pair", [&]{
+        //     try {
+        //         brokerage.buy("api_key1", 1, "XYZ", "GBP");
+        //     }
+        //     catch(std::exception& e) {
+        //         std::cout << e.what() << std::endl;
+        //     }
+
+        //     AssertThrows(std::runtime_error,
+        //                  brokerage.buy("api_key1", 1, "XYZ", "GBP"));
+        //     AssertThrows(std::runtime_error,
+        //                  brokerage.sell("api_key1", 1, "GBP", "XYZ"));
+
+        //     auto holdings = brokerage.get_holdings("api_key1");
+        //     AssertThat(holdings.find("XYZ"), Equals(holdings.end()));
+        // });
+
         it("applies a commission of 10GBP to each trade", [&]{
             // GIVEN:
             Brokerage brokerage2 {{

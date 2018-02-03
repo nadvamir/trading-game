@@ -48,6 +48,17 @@ describe("Account", []{
             AssertThat(worthEUR, EqualsWithDelta(21000, EPS));
             AssertThat(worthUSD, EqualsWithDelta(4200, EPS));
         });
+
+        it("ignores currencies that are not traded", [&]{
+            // GIVEN:
+            Account account {"Potap", {
+                {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}, {"XYZ", 100}
+            }, market};
+            // WHEN:
+            const double worthGBP = account.get_value_in("GBP");
+            // THEN
+            AssertThat(worthGBP, EqualsWithDelta(8400, EPS));
+        });
     });
 
     describe("Trading", [&]{
