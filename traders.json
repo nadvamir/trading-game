@@ -1,19 +1,19 @@
 {
     "api_key1": {
         "name": "Kondratiy",
-        "balances": {
+        "holdings": {
             "GBP": 1000000.0
         }
     },
     "api_key2": {
         "name": "Potap",
-        "balances": {
+        "holdings": {
             "GBP": 1000000.0
         }
     },
     "api_key3": {
         "name": "Isakiy",
-        "balances": {
+        "holdings": {
             "GBP": 1000000.0
         }
     }

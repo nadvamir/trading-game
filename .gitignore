@@ -34,3 +34,6 @@
 
 # build dir
 build
+
+# saves
+*.sav

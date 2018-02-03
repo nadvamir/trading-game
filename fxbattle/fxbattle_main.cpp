@@ -10,6 +10,22 @@
 
 using namespace fxbattle;
 
+void save(const exchange::Brokerage& brokerage, std::string filename)
+{
+    crow::json::wvalue traders;
+    const auto accounts = brokerage.account_names();
+    for (const auto& [api_key, name]: accounts) {
+        traders[api_key]["name"] = name;
+        for (const auto& [ccy, amount]: brokerage.get_holdings(api_key)) {
+            traders[api_key]["holdings"][ccy] = amount;
+        }
+
+    }
+    std::ofstream fw(filename);
+    fw << crow::json::dump(traders) << std::endl;
+    fw.close();
+}
+
 int main()
 {
     using namespace exchange;
@@ -42,6 +58,14 @@ int main()
         while (true) {
             ArbitrageDestroyer::normalise(market);
             auto interval = std::chrono::milliseconds(config["arbitrage_interval"].i());
+            std::this_thread::sleep_for(interval);
+        }
+    });
+
+    std::thread saver([&]{
+        while (true) {
+            save(brokerage, config["save_file"].s());
+            auto interval = std::chrono::seconds(config["saving_interval"].i());
             std::this_thread::sleep_for(interval);
         }
     });

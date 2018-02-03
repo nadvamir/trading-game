@@ -22,12 +22,22 @@ describe("Brokerage", []{
     }, 10, "GBP"};
 
     describe("Reporting", [&]{
-        it("provides a list of accounts it manages", [&]{
+        it("provides a list of values of accounts it manages", [&]{
             // GIVEN & WHEN:
             const auto accounts = brokerage.accounts_under_management("GBP");
             // THEN:
             const std::map<std::string, double> expected {
                 {"Kondratiy", 1000.0}, {"Potap", 2000.0}
+            };
+            AssertThat(accounts, Equals(expected));
+        });
+
+        it("provides a mapping from api key to an account name", [&]{
+            // GIVEN & WHEN:
+            const auto accounts = brokerage.account_names();
+            // THEN:
+            const std::map<std::string, std::string> expected {
+                {"api_key1", "Kondratiy"}, {"api_key2", "Potap"}
             };
             AssertThat(accounts, Equals(expected));
         });

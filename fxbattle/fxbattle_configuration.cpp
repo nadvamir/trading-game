@@ -36,13 +36,13 @@ auto get_traded_pairs(std::string filename)
     return traded_pairs;
 }
 
-auto get_balances(const crow::json::rvalue& json_balances)
+auto get_holdings(const crow::json::rvalue& json_balances)
 {
-    std::map<std::string, double> balances;
+    std::map<std::string, double> holdings;
     for (const auto& account: json_balances) {
-        balances.insert({account.key(), account.d()});
+        holdings.insert({account.key(), account.d()});
     }
-    return balances;
+    return holdings;
 }
 
 auto get_accounts(
@@ -58,7 +58,7 @@ auto get_accounts(
         std::string api_key = trader.key();
         std::string name = trader["name"].s();
         accounts.insert({api_key, Brokerage::A {
-            new Account {name, get_balances(trader["balances"]), market}
+            new Account {name, get_holdings(trader["holdings"]), market}
         }});
     }
     return accounts;

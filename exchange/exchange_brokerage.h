@@ -29,6 +29,15 @@ public:
         return report;
     }
 
+    std::map<std::string, std::string> account_names() const
+    {
+        std::map<std::string, std::string> names;
+        for (const auto& [api_key, account]: accounts) {
+            names.insert({api_key, account->get_name()});
+        }
+        return names;
+    }
+
     std::map<std::string, double> get_holdings(const std::string& api_key) const
     {
         return get_account(api_key).get_holdings();
