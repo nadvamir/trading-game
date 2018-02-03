@@ -238,6 +238,7 @@ function updateCharts(data) {
 }
 
 function updateAccounts(data) {
+    console.log(data);
     let sorted_accounts = [];
     for (let name in data) {
         sorted_accounts.push([data[name], name]);
