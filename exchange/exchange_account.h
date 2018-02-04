@@ -89,7 +89,11 @@ public:
         const double fee_in_ccy_buy = converter.convert(fee, ccy_fee, ccy_buy);
 
         std::lock_guard<std::mutex> guard(balance_mutex);
-        if (balances[ccy_sell] < 0 || amount > balances[ccy_sell] + overdraft) {
+        const auto balance = balances.find(ccy_sell);
+        if (balance == end(balances) ||
+            balance->second < 0 ||
+            amount > balance->second + overdraft)
+        {
             throw std::runtime_error("Not enough "+ccy_sell+" for the transaction!");
         }
 

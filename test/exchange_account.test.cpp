@@ -97,6 +97,21 @@ describe("Account", []{
             AssertThrows(std::runtime_error, account.buy(10000, "GBP", "EUR", 1, "GBP"));
         });
 
+        it("does not introduce non-existing ccy-pairs to the balance", [&]{
+            // GIVEN:
+            Account account {"Potap", {
+                {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}
+            }, market};
+            // WHEN:
+            AssertThrows(std::runtime_error, account.sell(1, "XYZ", "EUR", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.sell(1, "EUR", "XYZ", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.buy(1, "XYZ", "EUR", 1, "GBP"));
+            AssertThrows(std::runtime_error, account.buy(1, "EUR", "XYZ", 1, "GBP"));
+            // THEN:
+            const auto holdings = account.get_holdings();
+            AssertThat(holdings.find("XYZ"), Equals(holdings.end()));
+        });
+
         it("can get into negative as a result of execution of the trade", [&]{
             // GIVEN:
             Account account {"Potap", {
