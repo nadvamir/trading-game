@@ -122,3 +122,11 @@ git clone --recursive https://github.com/nadvamir/trading-game.git
 cd trading-game
 make
 ```
+
+Port is specified in *config.json*. If the exchange fails to bind to port 80,
+might have to either run it as a root or, preferably, setup port routing from 
+80 to something the exchange can bind to.
+
+Pass-in *.sav* files as arguments when starting FXBattle.exe in case of emergency
+to (mostly) restore the state.
+
