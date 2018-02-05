@@ -5,6 +5,7 @@
 #include <exchange_arbitragedestroyer.h>
 #include <exchange_brokerage.h>
 #include <fxbattle_configuration.h>
+#include <fxbattle_cachelessjsonresponse.h>
 #include <thread>
 #include <chrono>
 
@@ -86,7 +87,7 @@ int main()
         for (const auto& quote: quotes) {
             x[quote.ccy_pair] = quote.to_string();
         }
-        return x;
+        return CachelessJsonResponse{x};
     });
 
     CROW_ROUTE(app, "/accounts")([&brokerage]{
@@ -95,7 +96,7 @@ int main()
         for (const auto& [name, balance]: accounts) {
             x[name] = round(balance);
         }
-        return x;
+        return CachelessJsonResponse{x};
     });
 
     CROW_ROUTE(app, "/account/<string>")([&brokerage](const auto& api_key){
@@ -109,7 +110,7 @@ int main()
         catch (std::runtime_error& e) {
             x["error"] = e.what();
         }
-        return x;
+        return CachelessJsonResponse{x};
     });
 
     CROW_ROUTE(app, "/trade/<string>/<string>/<string>/<double>")
@@ -134,7 +135,7 @@ int main()
         catch (std::runtime_error& e) {
             x["error"] = e.what();
         }
-        return x;
+        return CachelessJsonResponse{x};
     });
 
     app.port(config["port"].i()).multithreaded().run();
