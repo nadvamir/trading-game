@@ -46,14 +46,16 @@ int main(int argc, const char* argv[])
     using namespace exchange;
     using namespace std::chrono_literals;
 
-    if (argc != 3) {
-        std::cout << "Usage: fxbattle.exe traded_pairs.json traders.json" << std::endl;
+    if (argc != 4) {
+        std::cout << "Usage: fxbattle.exe "
+                  << "config.json traded_pairs.json traders.json" << std::endl;
         return 1;
     }
-    const std::string traded_pairs_file = argv[1];
-    const std::string traders_file = argv[2];
+    const std::string config_file = argv[1];
+    const std::string traded_pairs_file = argv[2];
+    const std::string traders_file = argv[3];
 
-    const auto config = get_config("config.json");
+    const auto config = get_config(config_file);
     Market market = get_market(traded_pairs_file);
     Brokerage brokerage = get_brokerage(traders_file, config, market);
 
