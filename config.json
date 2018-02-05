@@ -6,7 +6,6 @@
     "chaos_trade_size": 10000000000,
     "fee_amount": 10.0,
     "currency": "GBP",
-    "saving_interval": 20,
-    "save_file": "traders.json.sav",
+    "saving_interval": 10,
     "port": 80
 }

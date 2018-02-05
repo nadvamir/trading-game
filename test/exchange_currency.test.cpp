@@ -11,12 +11,17 @@ const double EPS = 0.00001;
 go_bandit([]{
 describe("Currency", []{
     describe("Quote", []{
-        Currency GBPUSD {"GBP", "USD", 4ll, 14401};
+        Currency GBPUSD {"GBP", "USD", 4ll, 14401, 1000};
         Currency EURGBP {"EUR", "GBP", 2ll, 8300};
 
         it("combines currencies to form one ccy pair description", [&]{
             AssertThat(GBPUSD.quote().ccy_pair, Equals("GBPUSD"));
             AssertThat(EURGBP.quote().ccy_pair, Equals("EURGBP"));
+        });
+
+        it("returns the volume and spread", [&]{
+            AssertThat(GBPUSD.quote().volume, Equals(1000));
+            AssertThat(GBPUSD.quote().spread, Equals(4));
         });
 
         it("applies the spread to the quote", [&]{

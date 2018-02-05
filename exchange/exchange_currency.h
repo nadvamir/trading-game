@@ -14,6 +14,8 @@ struct Quote {
     std::string ccy_pair;
     std::string domestic;
     std::string foreign;
+    long long spread;
+    long long volume;
     double bid;
     double mid;
     double ask;
@@ -21,7 +23,7 @@ struct Quote {
     Quote invert() const
     {
         return Quote {
-            foreign + domestic, foreign, domestic,
+            foreign + domestic, foreign, domestic, spread, volume,
             1/bid, 1/mid, 1/ask
         };
     }
@@ -71,7 +73,7 @@ public:
         const double half_spread = bp_to_double(spread) / 2.0;
         const double mid = bp_to_double(rate_bp.load());
         return Quote {
-            domestic + foreign, domestic, foreign,
+            domestic + foreign, domestic, foreign, spread, volume,
             mid - half_spread, mid, mid + half_spread
         };
     }

@@ -27,6 +27,20 @@ void save(const exchange::Brokerage& brokerage, std::string filename)
     fw.close();
 }
 
+void save_market(const exchange::Market& market, std::string filename)
+{
+    crow::json::wvalue traded_pairs;
+    const auto quotes = market.get_all_quotes();
+    for (const auto& quote: quotes) {
+        traded_pairs[quote.ccy_pair]["spread"] = quote.spread;
+        traded_pairs[quote.ccy_pair]["rate"] = quote.mid;
+        traded_pairs[quote.ccy_pair]["volume"] = quote.volume;
+    }
+    std::ofstream fw(filename);
+    fw << crow::json::dump(traded_pairs) << std::endl;
+    fw.close();
+}
+
 int main(int argc, const char* argv[])
 {
     using namespace exchange;
@@ -36,10 +50,12 @@ int main(int argc, const char* argv[])
         std::cout << "Usage: fxbattle.exe traded_pairs.json traders.json" << std::endl;
         return 1;
     }
+    const std::string traded_pairs_file = argv[1];
+    const std::string traders_file = argv[2];
 
     const auto config = get_config("config.json");
-    Market market = get_market(argv[1]);
-    Brokerage brokerage = get_brokerage(argv[2], config, market);
+    Market market = get_market(traded_pairs_file);
+    Brokerage brokerage = get_brokerage(traders_file, config, market);
 
     //--------------------------------------------------------------------------
     RandomTrader trader {market, config["mover_trade_size"].i()};
@@ -70,7 +86,8 @@ int main(int argc, const char* argv[])
 
     std::thread saver([&]{
         while (true) {
-            save(brokerage, config["save_file"].s());
+            save(brokerage, traders_file + ".sav");
+            save_market(market, traded_pairs_file + ".sav");
             auto interval = std::chrono::seconds(config["saving_interval"].i());
             std::this_thread::sleep_for(interval);
         }
