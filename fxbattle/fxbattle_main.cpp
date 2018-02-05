@@ -27,14 +27,19 @@ void save(const exchange::Brokerage& brokerage, std::string filename)
     fw.close();
 }
 
-int main()
+int main(int argc, const char* argv[])
 {
     using namespace exchange;
     using namespace std::chrono_literals;
 
+    if (argc != 3) {
+        std::cout << "Usage: fxbattle.exe traded_pairs.json traders.json" << std::endl;
+        return 1;
+    }
+
     const auto config = get_config("config.json");
-    Market market = get_market("traded_pairs.json");
-    Brokerage brokerage = get_brokerage("traders.json", config, market);
+    Market market = get_market(argv[1]);
+    Brokerage brokerage = get_brokerage(argv[2], config, market);
 
     //--------------------------------------------------------------------------
     RandomTrader trader {market, config["mover_trade_size"].i()};

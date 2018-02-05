@@ -16,7 +16,7 @@ exchange: test
 
 fxbattle: test static
 	cd build && make FXBattle.exe
-	./build/FXBattle.exe
+	./build/FXBattle.exe traded_pairs.json traders.json
 
 static: build
 	cd build && make static
