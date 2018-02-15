@@ -7,5 +7,5 @@
     "fee_amount": 10.0,
     "currency": "GBP",
     "saving_interval": 10,
-    "port": 80
+    "port": 8080
 }
