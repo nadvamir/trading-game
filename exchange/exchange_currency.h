@@ -80,13 +80,13 @@ public:
 
     void buy(long long amount) const
     {
-        assert(amount > 0);
+        assert(amount >= 0);
         rate_bp.fetch_add(calculate_move(amount, 1));
     }
 
     void sell(long long amount) const
     {
-        assert(amount > 0);
+        assert(amount >= 0);
         rate_bp.fetch_add(calculate_move(amount, -1));
     }
 
