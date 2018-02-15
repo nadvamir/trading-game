@@ -178,6 +178,16 @@ describe("Account", []{
             AssertThrows(std::runtime_error, account.buy(0, "GBP", "EUR", 1, "GBP"));
             AssertThrows(std::runtime_error, account.sell(0, "GBP", "EUR", 1, "GBP"));
         });
+
+        it("does not crash when trading a tiny amount", [&]{
+            // GIVEN:
+            Account account {"Potap", {
+                {"EUR", 1000.0}, {"GBP", 2000.0}, {"USD", 3000}
+            }, market};
+            // WHEN & THEN:
+            account.buy(0.1, "GBP", "EUR", 1, "GBP");
+            account.sell(0.1, "GBP", "EUR", 1, "GBP");
+        });
     });
 });
 });

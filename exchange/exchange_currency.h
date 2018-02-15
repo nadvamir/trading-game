@@ -78,15 +78,15 @@ public:
         };
     }
 
-    void buy(long long amount) const
+    void buy(double amount) const
     {
-        assert(amount >= 0);
+        assert(amount > 0);
         rate_bp.fetch_add(calculate_move(amount, 1));
     }
 
-    void sell(long long amount) const
+    void sell(double amount) const
     {
-        assert(amount >= 0);
+        assert(amount > 0);
         rate_bp.fetch_add(calculate_move(amount, -1));
     }
 
@@ -107,9 +107,9 @@ public:
     }
 
 private:
-    long long calculate_move(long long amount, long long direction) const
+    long long calculate_move(double amount, long long direction) const
     {
-        double delta = double(amount) / double(volume) * 2000;
+        double delta = amount / double(volume) * 2000;
         if (amount >= 1'000'000) delta += 1;
         const bool rebounding = rate_bp * 1.2 < init_rate && direction > 0;
         const bool dampening = rate_bp * 0.8 > init_rate && direction < 0;

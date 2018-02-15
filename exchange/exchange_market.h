@@ -84,11 +84,11 @@ public:
 
         const bool inverted = quote.domestic != ccy1;
         if (inverted) {
-            ccy_pair.sell(bp_to_double(amount));
+            ccy_pair.sell(amount);
             return -quote.invert().bid * amount;
         }
         else {
-            ccy_pair.buy(bp_to_double(amount));
+            ccy_pair.buy(amount);
             return -quote.ask * amount;
         }
     }
@@ -100,11 +100,11 @@ public:
 
         const bool inverted = quote.domestic != ccy1;
         if (inverted) {
-            ccy_pair.buy(bp_to_double(amount));
+            ccy_pair.buy(amount);
             return amount * quote.invert().ask;
         }
         else {
-            ccy_pair.sell(bp_to_double(amount));
+            ccy_pair.sell(amount);
             return amount * quote.bid;
         }
     }
