@@ -260,7 +260,10 @@ function updateAccounts(data) {
 }
 
 function filterError(d){
-  if(typeof(d) !== "object") throw "got incorrect response type";
+  if (typeof(d) !== "object") {
+    console.log(d);
+    throw "got incorrect response type";
+  }
   return d;
 }
 
