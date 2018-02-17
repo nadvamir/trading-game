@@ -99,11 +99,15 @@ and taken from the amount you are receiving. E.g. if you are selling 100 USD
 and expecting to receive 10000 JPY, and 1 GBP is 200 JPY, you will receive
 8000 JPY.
 
-## Example trader
+## Example traders and client libraries
 
-[There's a trading robot in the `example` folder.](example/random_trader.py) It shows how to use the API.
-I would not recommend you to run it with your api key, since it's not the smartest
-and every trade you make is live.
+[examples](./examples)
+
+Some example traders and client libraries for various languages are in the [examples](./examples) directory
+
+- [python](./examples/python)
+
+Please feel free to contribute your libraries
 
 ## Running the exchange
 
