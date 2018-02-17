@@ -118,12 +118,12 @@ Alternatively, you can use this lookup table.
 Assuming that the quote is *GBPUSD 1.9 2.1* (Bid 1.9, Ask 2.1), the amount is *1000*,
 and the fee is *10 GBP*:
 
-Action       | rate        | Pay               | Receive
----------------------------------------------------------------------------
-Buy GBPUSD   | Ask         | 1000 * 2.1 USD    | 1000 GBP - 10 GBP
-Buy USDGBP   | 1/Bid       | 1000 * 0.5263 GBP | 1000 USD - 20 USD
-Sell GBPUSD  | Bid         | 1000 GBP          | 1000 * 1.9 USD - 20 USD
-Sell USDGBP  | 1/Ask       | 1000 USD          | 1000 * 0.4762 GBP - 10 GBP
+| Action       | rate        | Pay               | Receive                    |
+| ------------ |:-----------:| ----------------- | -------------------------- |
+| Buy GBPUSD   | Ask         | 1000 * 2.1 USD    | 1000 GBP - 10 GBP          |
+| Buy USDGBP   | 1/Bid       | 1000 * 0.5263 GBP | 1000 USD - 20 USD          |
+| Sell GBPUSD  | Bid         | 1000 GBP          | 1000 * 1.9 USD - 20 USD    |
+| Sell USDGBP  | 1/Ask       | 1000 USD          | 1000 * 0.4762 GBP - 10 GBP |
 
 Note how the exchange always takes the fee from the amount received. It converts 
 10 GBP to the correct currency using the *mid price* (`(1.9 + 2.1) / 2 = 2.0`).
