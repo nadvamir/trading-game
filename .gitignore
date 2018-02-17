@@ -37,5 +37,12 @@ build
 
 # saves
 *.sav
+
+# vim stuff
 .*.swp
+
+# python ignores
 __pycache__/
+
+# node js ignores
+node_modules
