@@ -242,7 +242,6 @@ function updateCharts(data) {
 }
 
 function updateAccounts(data) {
-    console.log(data);
     let sorted_accounts = [];
     for (let name in data) {
         sorted_accounts.push([data[name], name]);
@@ -260,12 +259,21 @@ function updateAccounts(data) {
     $('#accounts').html(accounts);
 }
 
+function filterError(d){
+  if(typeof(d) !== "object") throw "got incorrect response type";
+  return d;
+}
+
+function logError(e){
+  console.log("Error", e);
+}
+
 setInterval(function() {
-    $.get('market', [], updateCharts);
+    $.get('market', []).then(filterError).then(updateCharts, logError);
 }, 2000);
 
 setInterval(function() {
-    $.get('accounts', [], updateAccounts);
+    $.get('accounts', []).then(filterError).then(updateAccounts, logError);
 }, 2000);
 
 </script>
