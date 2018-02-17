@@ -1,0 +1,17 @@
+{
+  "name": "fxbattleclient",
+  "version": "1.0.0",
+  "description": "a client to access and trade on the market",
+  "main": "random_trader.js",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-node6": "^11.0.0",
+    "node-fetch": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

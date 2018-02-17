@@ -105,9 +105,11 @@ and expecting to receive 10000 JPY, and 1 GBP is 200 JPY, you will receive
 
 Some example traders and client libraries for various languages are in the [examples](./examples) directory
 
-- [python](./examples/python)
+- [python3](./examples/python)
+- [javascript (nodejs v6.0)](./examples/javascript)
 
 Please feel free to contribute your libraries
+
 
 ## Running the exchange
 
