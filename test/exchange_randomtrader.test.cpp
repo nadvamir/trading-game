@@ -7,7 +7,7 @@ using namespace snowhouse;
 using namespace bandit;
 using namespace exchange;
 
-const double EPS = 0.0001;
+const double EPS = 0.00001;
 
 go_bandit([]{
 describe("RandomTrader", []{
