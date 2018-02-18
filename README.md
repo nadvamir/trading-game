@@ -99,6 +99,44 @@ and taken from the amount you are receiving. E.g. if you are selling 100 USD
 and expecting to receive 10000 JPY, and 1 GBP is 200 JPY, you will receive
 8000 JPY.
 
+## Trading tips
+
+### Bid vs Ask
+
+Theory: In the real market there are traders on both sides submitting limit orders, specifying
+at which price they want to buy or sell. People want to buy cheap and sell expensive,
+hence the spread between Bid price (how much they are bidding to buy currency from you) and
+Ask price (how much they are asking in order to sell to you). The trade only happens when
+both parties agree on the price. You are trading by placing market orders, which means
+you agree to pay whatever price the market offers.
+
+Practice: Because you agree to pay whichever price the market offers, you are always
+on the disadvantaged side. To figure out which rate applies to you, pick the one
+that leaves you worse-off: you are paying more when buying and receiving less when selling.
+
+Alternatively, you can use this lookup table.
+Assuming that the quote is *GBPUSD 1.9 2.1* (Bid 1.9, Ask 2.1), the amount is *1000*,
+and the fee is *10 GBP*:
+
+| Action       | rate        | Pay               | Receive                    |
+| ------------ |:-----------:| ----------------- | -------------------------- |
+| Buy GBPUSD   | Ask         | 1000 * 2.1 USD    | 1000 GBP - 10 GBP          |
+| Buy USDGBP   | 1/Bid       | 1000 * 0.5263 GBP | 1000 USD - 20 USD          |
+| Sell GBPUSD  | Bid         | 1000 GBP          | 1000 * 1.9 USD - 20 USD    |
+| Sell USDGBP  | 1/Ask       | 1000 USD          | 1000 * 0.4762 GBP - 10 GBP |
+
+Note how the exchange always takes the fee from the amount received. It converts 
+10 GBP to the correct currency using the *mid price* (`(1.9 + 2.1) / 2 = 2.0`).
+
+### Overdraft
+
+The market can move during the execution of your trade. This means that even if you had 
+enough money before you submitted your order, you might no longer have enough by the time
+the exchange receives it. To smooth out such inconveniences, there's a small interest-free
+overdraft given to your account (this is not how it works IRL). This means your balance
+can get negative for a certain currency. In that case, you will have to buy this
+currency before you can trade it again.
+
 ## Example traders and client libraries
 
 [examples](./examples)
