@@ -1,0 +1,8 @@
+version: '2'
+services:
+  fxbattle-app:
+    build: .
+    volumes: 
+      - .:/config
+    ports:
+      - "8080:8080"
