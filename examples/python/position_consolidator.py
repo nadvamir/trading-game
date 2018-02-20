@@ -33,6 +33,7 @@ print("Position consolidator", "endpoint:", args.endpoint, "apikey:", args.apike
 
 client = FxClient(args.endpoint, args.apikey)
 targetCurrncy = args.currency
+buff = args.buffer
 
 try:
     account = client.account()
