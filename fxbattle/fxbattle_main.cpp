@@ -6,6 +6,7 @@
 #include <exchange_brokerage.h>
 #include <fxbattle_configuration.h>
 #include <fxbattle_cachelessjsonresponse.h>
+#include <fxbattle/fxbattle_htmlresponse.h>
 #include <thread>
 #include <chrono>
 
@@ -102,7 +103,7 @@ int main(int argc, const char* argv[])
         crow::mustache::context x;
     
         auto page = crow::mustache::load("index.html");
-        return page.render(x);
+        return HtmlResponse{page.render(x)};
     });
 
     CROW_ROUTE(app, "/market")([&market]{
