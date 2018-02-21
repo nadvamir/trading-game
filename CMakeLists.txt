@@ -11,22 +11,27 @@ include_directories(".")
 include_directories("exchange")
 include_directories("fxbattle")
 
-# sources
-file(GLOB test_SRC
-    "test/*.h"
-    "test/*.cpp"
-)
-
-file(GLOB fxbattle_SRC
-    "fxbattle/*.h"
-    "fxbattle/*.cpp"
-)
-
 # test
-add_executable(Test.exe ${test_SRC})
+add_executable(Test.exe 
+  ${PROJECT_SOURCE_DIR}/test/exchange_account.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_arbitragedestroyer.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_brokerage.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_currency.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_fxconversions.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_fxconverter.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_main.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_market.test.cpp
+  ${PROJECT_SOURCE_DIR}/test/exchange_randomtrader.test.cpp
+)
 
 # service
-add_executable(FXBattle.exe ${fxbattle_SRC})
+add_executable(FXBattle.exe 
+  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_cachelessjsonresponse.h
+  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_configuration.cpp
+  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_configuration.h
+  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_main.cpp
+)
+
 target_link_libraries(FXBattle.exe ${Boost_LIBRARIES})
 target_link_libraries(FXBattle.exe ${CMAKE_THREAD_LIBS_INIT})
 

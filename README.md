@@ -139,15 +139,12 @@ currency before you can trade it again.
 
 ## Example traders and client libraries
 
-[examples](./examples)
-
 Some example traders and client libraries for various languages are in the [examples](./examples) directory
 
 - [python3](./examples/python)
 - [javascript (nodejs v6.0)](./examples/javascript)
 
 Please feel free to contribute your libraries
-
 
 ## Running the exchange
 
@@ -157,6 +154,8 @@ Depends on:
 g++-7
 cmake
 libboost-all-dev
+docker 
+docker-compose
 ```
 
 With dependencies installed:
@@ -164,7 +163,14 @@ With dependencies installed:
 ```bash
 git clone --recursive https://github.com/nadvamir/trading-game.git
 cd trading-game
+```
+and either:
+```
 make
+```
+or if you wish to build and run the docker container
+```bash
+docker-compose up
 ```
 
 Port is specified in *config.json*. If the exchange fails to bind to port 80,
@@ -173,4 +179,6 @@ might have to either run it as a root or, preferably, setup port routing from
 
 Pass-in *.sav* files as arguments when starting FXBattle.exe in case of emergency
 to (mostly) restore the state.
+
+see the nginx sample config in `/etc/nginx/sites-enabled/` as an example of reverse proxying and adding https
 
