@@ -148,6 +148,8 @@ Please feel free to contribute your libraries
 
 ## Running the exchange
 
+### Building
+
 Depends on:
 
 ```
@@ -165,7 +167,7 @@ git clone --recursive https://github.com/nadvamir/trading-game.git
 cd trading-game
 ```
 and either:
-```
+```bash
 make
 ```
 or if you wish to build and run the docker container
@@ -173,12 +175,16 @@ or if you wish to build and run the docker container
 docker-compose up
 ```
 
-Port is specified in *config.json*. If the exchange fails to bind to port 80,
-might have to either run it as a root or, preferably, setup port routing from 
-80 to something the exchange can bind to.
+### Operational tips
+
+Port is specified in *config.json*. 
+
+See the nginx sample config in `/etc/nginx/sites-enabled/` as an example of reverse proxying and adding https.
 
 Pass-in *.sav* files as arguments when starting FXBattle.exe in case of emergency
 to (mostly) restore the state.
 
-see the nginx sample config in `/etc/nginx/sites-enabled/` as an example of reverse proxying and adding https
+A script to generate contestants:
+
+- [generate-traders.py](./scripts/generate-traders.py)
 
