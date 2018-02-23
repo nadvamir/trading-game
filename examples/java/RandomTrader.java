@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class RandomTrader {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         if (args.length != 2) {
             System.out.println("Usage: java -jar trader.jar http://127.0.0.1:8080 api_key");
             return;
@@ -16,8 +16,8 @@ public class RandomTrader {
         String apiKey = args[1];
         FXBattleClient client = new FXBattleClient(endpoint, apiKey);
 
-        try {
-            while (true) {
+        while (true) {
+            try {
                 JSONObject acc = client.account();
 
                 if (acc.has("error")) {
@@ -39,9 +39,12 @@ public class RandomTrader {
 
                 Thread.sleep(ThreadLocalRandom.current().nextInt(100, 1000));
             }
-        }
-        catch (UnirestException e) {
-            System.out.println(e);
+            catch (UnirestException e) {
+                System.out.println(e);
+            }
+            catch (InterruptedException e) {
+                System.out.println(e);
+            }
         }
     }
 }
