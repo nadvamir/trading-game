@@ -19,6 +19,7 @@ copy exchange/          /source/exchange/
 copy templates/         /source/templates/
 copy test/              /source/test/
 copy fxbattle/          /source/fxbattle/
+copy statsd-c-client/   /source/statsd-c-client/
 
 # source files
 copy CMakeLists.txt Makefile /source/

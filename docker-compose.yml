@@ -1,8 +1,38 @@
 version: '2'
 services:
   fxbattle-app:
+    depends_on:
+      - graphite
     build: .
     volumes: 
       - .:/config
     ports:
       - "8080:8080"
+    networks:
+      - stats
+    environment:
+      - "ENV_STATSHOST=graphite"
+      - "ENV_STATSPORT=8125"
+
+  graphite:
+    image: hopsoft/graphite-statsd
+    networks:
+      - stats
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - stats
+    volumes:
+      - "grafana-config:/var/lib/grafana"
+    environment:
+      - "GF_SERVER_ROOT_URL=http://james2.fxbattle.com:8088/"
+      - "GF_SECURITY_ADMIN_PASSWORD=thisisatest"
+
+networks:
+  stats:
+
+volumes:
+  grafana-config: 

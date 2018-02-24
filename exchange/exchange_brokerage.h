@@ -23,7 +23,8 @@ public:
     std::map<std::string, double> accounts_under_management(const std::string& reporting_ccy) const
     {
         std::map<std::string, double> report;
-        for (const auto& [_, account]: accounts) {
+        for (auto& account_entry: accounts) {
+            auto& account = account_entry.second; 
             report.insert({account->get_name(), account->get_value_in(reporting_ccy)});
         }
         return report;

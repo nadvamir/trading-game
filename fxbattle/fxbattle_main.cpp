@@ -7,8 +7,8 @@
 #include <fxbattle_configuration.h>
 #include <fxbattle_cachelessjsonresponse.h>
 #include <fxbattle/fxbattle_htmlresponse.h>
+#include <fxbattle/fxbattle_metrics.h>
 #include <thread>
-#include <chrono>
 
 using namespace fxbattle;
 
@@ -21,7 +21,6 @@ void save(const exchange::Brokerage& brokerage, std::string filename)
         for (const auto& [ccy, amount]: brokerage.get_holdings(api_key)) {
             traders[api_key]["holdings"][ccy] = amount;
         }
-
     }
     std::ofstream fw(filename);
     fw << crow::json::dump(traders) << std::endl;
@@ -97,16 +96,44 @@ int main(int argc, const char* argv[])
     });
 
     //--------------------------------------------------------------------------
+
+    auto getEnvOrDefault = [](const char *name,
+                              const char *def) -> const char * {
+      char *val = std::getenv(name);
+      if (!val)
+        return def;
+      return val;
+    };
+
+    const std::string ENV_STATSHOST =
+        getEnvOrDefault("ENV_STATSHOST", "localhost");
+
+    const int ENV_STATSPORT =
+        std::atoi(getEnvOrDefault("ENV_STATSPORT", "8125"));
+
+    statsd stats;
+
+    if (!stats.start(ENV_STATSHOST, ENV_STATSPORT)) {
+      std::cout << "not logging stats, set ENV_STATSHOST and ENV_STATSPORT to "
+                   "enable\n";
+    }
+
+    std::string api_timer_stat{"api_timer"};
+    std::string page_hits_stat{"page_hits"};
+
     crow::SimpleApp app;
 
-    CROW_ROUTE(app, "/")([](){
+    CROW_ROUTE(app, "/")([&stats, &page_hits_stat](){
+        statsd::timing_scope timer{stats, page_hits_stat};
         crow::mustache::context x;
     
         auto page = crow::mustache::load("index.html");
         return HtmlResponse{page.render(x)};
     });
 
-    CROW_ROUTE(app, "/market")([&market]{
+    CROW_ROUTE(app, "/market")
+    ([&market, &stats, &api_timer_stat]{
+        statsd::timing_scope timer{stats, api_timer_stat};
         crow::json::wvalue x;
         const auto quotes = market.get_all_quotes();
         for (const auto& quote: quotes) {
@@ -115,7 +142,9 @@ int main(int argc, const char* argv[])
         return CachelessJsonResponse{x};
     });
 
-    CROW_ROUTE(app, "/accounts")([&brokerage]{
+    CROW_ROUTE(app, "/accounts")
+    ([&brokerage, &stats, &api_timer_stat]{
+        statsd::timing_scope timer{stats, api_timer_stat};
         crow::json::wvalue x;
         const auto accounts = brokerage.accounts_under_management("GBP");
         for (const auto& [name, balance]: accounts) {
@@ -124,7 +153,9 @@ int main(int argc, const char* argv[])
         return CachelessJsonResponse{x};
     });
 
-    CROW_ROUTE(app, "/account/<string>")([&brokerage](const auto& api_key){
+    CROW_ROUTE(app, "/account/<string>")
+    ([&brokerage, &stats, &api_timer_stat](const auto& api_key){
+        statsd::timing_scope timer{stats, api_timer_stat};
         crow::json::wvalue x;
         try {
             const auto holdings = brokerage.get_holdings(api_key);
@@ -139,10 +170,11 @@ int main(int argc, const char* argv[])
     });
 
     CROW_ROUTE(app, "/trade/<string>/<string>/<string>/<double>")
-    ([&brokerage](const auto& api_key,
+    ([&brokerage, &stats, &api_timer_stat](const auto& api_key,
                   const auto& direction,
                   const auto& ccy_pair,
                   double amount) {
+        statsd::timing_scope timer{stats, api_timer_stat};
         crow::json::wvalue x;
         try {
             if (ccy_pair.size() != 6) throw std::runtime_error("Wrong ccy pair");
@@ -163,6 +195,7 @@ int main(int argc, const char* argv[])
         return CachelessJsonResponse{x};
     });
 
+    app.loglevel(crow::LogLevel::Warning);
     app.port(config["port"].i()).multithreaded().run();
 }
 
