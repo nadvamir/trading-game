@@ -143,6 +143,7 @@ Some example traders and client libraries for various languages are in the [exam
 
 - [python3](./examples/python)
 - [javascript (nodejs v6.0)](./examples/javascript)
+- [java](./examples/java)
 
 Please feel free to contribute your libraries
 

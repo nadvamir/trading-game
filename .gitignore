@@ -46,3 +46,7 @@ __pycache__/
 
 # node js ignores
 node_modules
+
+# java
+.gradle
+
