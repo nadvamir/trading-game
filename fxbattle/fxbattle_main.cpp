@@ -9,6 +9,7 @@
 #include <fxbattle/fxbattle_htmlresponse.h>
 #include <fxbattle/fxbattle_metrics.h>
 #include <thread>
+#include <atomic>
 
 using namespace fxbattle;
 
@@ -41,6 +42,13 @@ void save_market(const exchange::Market& market, std::string filename)
     fw.close();
 }
 
+struct Intervals {
+    std::atomic_int trade_interval;
+    std::atomic_int chaos_interval;
+    std::atomic_int arbitrage_interval;
+    std::atomic_int saving_interval;
+};
+
 int main(int argc, const char* argv[])
 {
     using namespace exchange;
@@ -59,12 +67,20 @@ int main(int argc, const char* argv[])
     Market market = get_market(traded_pairs_file);
     Brokerage brokerage = get_brokerage(traders_file, config, market);
 
+    Intervals intervals {
+        config["trade_interval"].i(),
+        config["chaos_interval"].i(),
+        config["arbitrage_interval"].i(),
+        config["saving_interval"].i()
+    };
+
     //--------------------------------------------------------------------------
+    // Game logic
     RandomTrader trader {market, config["mover_trade_size"].i()};
     std::thread market_mover([&]{
         while (true) {
             trader.trade();
-            auto interval = std::chrono::milliseconds(config["trade_interval"].i());
+            auto interval = std::chrono::milliseconds(intervals.trade_interval);
             std::this_thread::sleep_for(interval);
         }
     });
@@ -73,7 +89,7 @@ int main(int argc, const char* argv[])
     std::thread chaos_mover([&]{
         while (true) {
             chaos_trader.trade();
-            auto interval = std::chrono::milliseconds(config["chaos_interval"].i());
+            auto interval = std::chrono::milliseconds(intervals.chaos_interval);
             std::this_thread::sleep_for(interval);
         }
     });
@@ -81,7 +97,7 @@ int main(int argc, const char* argv[])
     std::thread arbitrage_destroyer([&]{
         while (true) {
             ArbitrageDestroyer::normalise(market);
-            auto interval = std::chrono::milliseconds(config["arbitrage_interval"].i());
+            auto interval = std::chrono::milliseconds(intervals.arbitrage_interval);
             std::this_thread::sleep_for(interval);
         }
     });
@@ -90,13 +106,13 @@ int main(int argc, const char* argv[])
         while (true) {
             save(brokerage, traders_file + ".sav");
             save_market(market, traded_pairs_file + ".sav");
-            auto interval = std::chrono::seconds(config["saving_interval"].i());
+            auto interval = std::chrono::seconds(intervals.saving_interval);
             std::this_thread::sleep_for(interval);
         }
     });
 
     //--------------------------------------------------------------------------
-
+    // Trading API
     auto getEnvOrDefault = [](const char *name,
                               const char *def) -> const char * {
       char *val = std::getenv(name);
@@ -195,7 +211,51 @@ int main(int argc, const char* argv[])
         return CachelessJsonResponse{x};
     });
 
-    app.loglevel(crow::LogLevel::Warning);
-    app.port(config["port"].i()).multithreaded().run();
+    std::thread api_app([&]{
+        app.loglevel(crow::LogLevel::Warning);
+        app.port(config["port"].i()).multithreaded().run();
+    });
+
+    //--------------------------------------------------------------------------
+    // Runtime game configuration
+    crow::SimpleApp config_app;
+
+    CROW_ROUTE(config_app, "/")([&intervals](){
+        crow::mustache::context x;
+        x["trade_interval"] = intervals.trade_interval;
+        x["chaos_interval"] = intervals.chaos_interval;
+        x["arbitrage_interval"] = intervals.arbitrage_interval;
+        x["saving_interval"] = intervals.saving_interval;
+    
+        auto page = crow::mustache::load("config.html");
+        return HtmlResponse{page.render(x)};
+    });
+
+    CROW_ROUTE(config_app, "/update")
+    .methods("POST"_method)
+    ([&intervals](const crow::request& req){
+        auto x = crow::json::load(req.body);
+        if (!x) return crow::response(400);
+
+        int trade_interval = x["trade_interval"].i();
+        int chaos_interval = x["chaos_interval"].i();
+        int arbitrage_interval = x["arbitrage_interval"].i();
+        int saving_interval = x["saving_interval"].i();
+
+        if (trade_interval < 0 || chaos_interval < 0
+            || arbitrage_interval < 0 || saving_interval < 0)
+        {
+            return crow::response(400);
+        }
+
+        intervals.trade_interval = trade_interval;
+        intervals.chaos_interval = chaos_interval;
+        intervals.arbitrage_interval = arbitrage_interval;
+        intervals.saving_interval = saving_interval;
+
+        return crow::response(200);
+    });
+
+    config_app.port(8081).multithreaded().run();
 }
 

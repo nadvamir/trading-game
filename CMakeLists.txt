@@ -47,4 +47,9 @@ add_custom_command(OUTPUT index.html
     copy ${PROJECT_SOURCE_DIR}/templates/index.html ${CMAKE_CURRENT_BINARY_DIR}/templates/index.html
     DEPENDS ${PROJECT_SOURCE_DIR}/templates/index.html
 )
-add_custom_target(static ALL DEPENDS index.html)
+add_custom_command(OUTPUT config.html
+    COMMAND ${CMAKE_COMMAND} -E
+    copy ${PROJECT_SOURCE_DIR}/templates/config.html ${CMAKE_CURRENT_BINARY_DIR}/templates/config.html
+    DEPENDS ${PROJECT_SOURCE_DIR}/templates/config.html
+)
+add_custom_target(static ALL DEPENDS index.html config.html)

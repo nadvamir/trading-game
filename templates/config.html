@@ -1,0 +1,30 @@
+<html>
+<head>
+</head>
+<body>
+<form onsubmit="updateIntervals()" action="#">
+<p>Trade interval: <input id="trade" type="text" value="{{trade_interval}}" /></p>
+<p>Chaos interval: <input id="chaos" type="text" value="{{chaos_interval}}" /></p>
+<p>Arbitrage interval: <input id="arbitrage" type="text" value="{{arbitrage_interval}}" /></p>
+<p>Saving interval: <input id="saving" type="text" value="{{saving_interval}}" /></p>
+<input type="submit" value="update!"/>
+</form>
+
+<script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+function updateIntervals() {
+    var data = {
+        trade_interval: parseInt($('#trade').val(), 10),
+        chaos_interval: parseInt($('#chaos').val(), 10),
+        arbitrage_interval: parseInt($('#arbitrage').val(), 10),
+        saving_interval: parseInt($('#saving').val(), 10)
+    };
+    console.log(data);
+    $.post('/update', JSON.stringify(data), function() {
+        alert('updated!');
+    });
+}
+</script>
+</body>
+</html>
