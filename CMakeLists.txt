@@ -1,4 +1,6 @@
 cmake_minimum_required (VERSION 2.6)
+
+# main project
 project (FXBattle)
 
 find_package(Threads)
@@ -6,10 +8,14 @@ find_package(Threads)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17 -pedantic -Wextra")
 find_package(Boost 1.52 COMPONENTS system thread REQUIRED)
 
+# statsd client library
+add_library(StatsDLibrary "${PROJECT_SOURCE_DIR}/statsd-c-client/statsd-client.c")
+
 # includes
 include_directories(".")
 include_directories("exchange")
 include_directories("fxbattle")
+include_directories("statsd-c-client")
 
 # test
 add_executable(Test.exe 
@@ -26,14 +32,14 @@ add_executable(Test.exe
 
 # service
 add_executable(FXBattle.exe 
-  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_cachelessjsonresponse.h
   ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_configuration.cpp
-  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_configuration.h
+  ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_metrics.cpp
   ${PROJECT_SOURCE_DIR}/fxbattle/fxbattle_main.cpp
 )
 
 target_link_libraries(FXBattle.exe ${Boost_LIBRARIES})
 target_link_libraries(FXBattle.exe ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(FXBattle.exe StatsDLibrary)
 
 # static files
 add_custom_command(OUTPUT index.html
