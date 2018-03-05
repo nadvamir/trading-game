@@ -1,12 +1,7 @@
-from ubuntu:xenial
+from rikorose/gcc-cmake:gcc-7
 
-# install build deps
 run apt-get update && apt-get upgrade -y && \
-   apt-get install -y build-essential software-properties-common cmake libboost-all-dev && \
-   add-apt-repository ppa:ubuntu-toolchain-r/test && apt-get update && \
-   apt-get install -y gcc-7 g++-7 &&  \
-   update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 60 && \
-   update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60
+   apt-get install -y libboost-all-dev
 
 # n.b. any changes to the files and directories mentioned in the below copies
 #      will trigger a rebuild of the container from that point onward
