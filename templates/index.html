@@ -246,7 +246,7 @@ function updateAccounts(data) {
     for (let name in data) {
         sorted_accounts.push([data[name], name]);
     }
-    sorted_accounts.sort((a, b) => { return a[0] < b[0]; });
+    sorted_accounts.sort((a, b) => { return b[0] - a[0]; });
 
     var accounts = '<table><tr><th class="name">Name</th><th class="balance">&pound;</th></tr>';
     for (let i in sorted_accounts) {
