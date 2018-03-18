@@ -167,6 +167,18 @@ describe("Account", []{
             AssertThrows(std::runtime_error, account.sell(10, "EUR", "USD", 1, "GBP"));
         });
 
+        it("allows to repay overdraft by both buying and selling", [&]{
+            // GIVEN:
+            Account account {"Potap", {{"EUR", -1000.0}, {"USD", 10000.0}}, market};
+            // WHEN:
+            account.buy(500.0, "EUR", "USD", 1, "GBP");
+            account.sell(500.0, "USD", "EUR", 1, "GBP");
+            // THEN:
+            auto holdings = account.get_holdings();
+            AssertThat(holdings["EUR"], IsGreaterThan(0.0));
+            AssertThat(holdings["USD"], IsGreaterThan(0.0));
+        });
+
         it("throws when trying to buy or sell an invalid amount", [&]{
             // GIVEN:
             Account account {"Potap", {
